@@ -26,7 +26,7 @@ export default function Sidebar() {
   const location = useLocation()
 
   return (
-    <aside className="w-[72px] hover:w-[220px] transition-all duration-300 ease-in-out bg-bg-surface/95 backdrop-blur-md border-r border-border-default/80 flex flex-col group overflow-hidden z-50 relative">
+    <aside className="w-[72px] hover:w-[220px] transition-all duration-300 ease-in-out bg-white border-r border-border-default flex flex-col group overflow-hidden z-50 relative">
       {/* Logo */}
       <div className="flex items-center h-14 px-4 border-b border-border-default/80">
         <div className="flex items-center gap-3 min-w-0">

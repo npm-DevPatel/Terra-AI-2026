@@ -12,7 +12,7 @@ export default function TopBar() {
   const title = pageTitles[location.pathname] || 'Terra AI'
 
   return (
-    <header className="h-14 bg-bg-surface/95 backdrop-blur-md border-b border-border-default/80 shadow-sm flex items-center justify-between px-6 z-40 relative">
+    <header className="h-14 bg-white border-b border-border-default shadow-sm flex items-center justify-between px-6 z-40 relative">
       {/* Left: Page Title */}
       <div className="flex items-center gap-4">
         <h1 className="text-base font-bold text-text-primary">{title}</h1>

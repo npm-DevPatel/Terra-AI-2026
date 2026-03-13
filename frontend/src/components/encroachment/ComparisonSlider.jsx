@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react'
-import GlassPanel from '../shared/GlassPanel'
+import Panel from '../shared/Panel'
 
 export default function ComparisonSlider() {
   const [position, setPosition] = useState(50)
@@ -27,7 +27,7 @@ export default function ComparisonSlider() {
   }
 
   return (
-    <GlassPanel className="w-full overflow-hidden shadow-xl border-border-default/80">
+    <Panel className="w-full overflow-hidden shadow-xl">
       <div className="px-5 py-4 border-b border-border-default/80 flex items-center justify-between bg-bg-surface/50">
         <div className="flex items-center gap-3">
           <div className="w-6 h-6 rounded-lg bg-accent-teal-light border border-accent-teal/30 flex items-center justify-center">
@@ -69,7 +69,7 @@ export default function ComparisonSlider() {
               <div className="absolute top-[38%] left-0 right-0 h-4 bg-accent-teal/10 blur-xl transform rotate-2" />
               <div className="absolute top-[40%] left-0 right-0 h-1.5 bg-accent-teal/20 transform rotate-2" />
             </div>
-            <div className="relative z-10 text-[10px] font-bold text-text-primary bg-white/70 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/50 shadow-sm uppercase tracking-wider">
+            <div className="relative z-10 text-[10px] font-bold text-text-primary bg-white px-3 py-1.5 rounded-full border border-border-default shadow-sm uppercase tracking-wider">
               Pristine Riparian Zone — Jan 2024
             </div>
           </div>
@@ -98,7 +98,7 @@ export default function ComparisonSlider() {
               <div className="absolute top-[35%] left-[45%] w-12 h-8 bg-risk-high/10 border border-risk-high/40 rounded-lg shadow-[0_0_12px_rgba(220,38,38,0.1)]" />
               <div className="absolute top-[30%] left-[65%] w-9 h-6 bg-risk-medium/10 border border-risk-medium/40 rounded-lg shadow-[0_0_12px_rgba(217,119,6,0.1)]" />
             </div>
-            <div className="relative z-10 text-[10px] font-bold text-risk-high bg-white/70 backdrop-blur-sm px-3 py-1.5 rounded-full border border-risk-high/20 shadow-sm uppercase tracking-wider">
+            <div className="relative z-10 text-[10px] font-bold text-risk-high bg-white px-3 py-1.5 rounded-full border border-risk-high/20 shadow-sm uppercase tracking-wider">
               Multiple Encroachments — Mar 2026
             </div>
           </div>
@@ -118,6 +118,6 @@ export default function ComparisonSlider() {
           </div>
         </div>
       </div>
-    </GlassPanel>
+    </Panel>
   )
 }

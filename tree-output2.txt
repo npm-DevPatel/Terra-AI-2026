@@ -1,0 +1,81 @@
+Terra-AI
+├── .gitignore
+├── backend
+│   ├── .env.example
+│   ├── .gitkeep
+│   ├── ai_service.py
+│   ├── data
+│   │   ├── alerts.json
+│   │   ├── encroachments.json
+│   │   ├── metrics.json
+│   │   └── rivers.json
+│   ├── geo_engine.py
+│   ├── main.py
+│   ├── requirements.txt
+│   └── __pycache__
+│       ├── ai_service.cpython-312.pyc
+│       ├── geo_engine.cpython-312.pyc
+│       └── main.cpython-312.pyc
+├── BACKEND_REQUIREMENTS.md
+├── frontend
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── public
+│   │   └── favicon.svg
+│   ├── src
+│   │   ├── App.jsx
+│   │   ├── components
+│   │   │   ├── dashboard
+│   │   │   │   ├── AlertFeed.jsx
+│   │   │   │   ├── HUDMetricsBar.jsx
+│   │   │   │   └── SatelliteTimeline.jsx
+│   │   │   ├── encroachment
+│   │   │   │   ├── ComparisonSlider.jsx
+│   │   │   │   └── EncroachmentTable.jsx
+│   │   │   ├── insights
+│   │   │   │   └── Charts.jsx
+│   │   │   ├── layout
+│   │   │   │   ├── AppLayout.jsx
+│   │   │   │   ├── Sidebar.jsx
+│   │   │   │   └── TopBar.jsx
+│   │   │   ├── map
+│   │   │   │   ├── LayerControls.jsx
+│   │   │   │   ├── MapContainer.jsx
+│   │   │   │   └── MapStyleSwitcher.jsx
+│   │   │   ├── risk
+│   │   │   │   ├── AIChatPanel.jsx
+│   │   │   │   └── SiteRiskReportCard.jsx
+│   │   │   └── shared
+│   │   │       ├── CountUpNumber.jsx
+│   │   │       ├── GlassPanel.jsx
+│   │   │       └── StatusBadge.jsx
+│   │   ├── data
+│   │   │   ├── alerts.json
+│   │   │   ├── encroachments.json
+│   │   │   ├── metrics.json
+│   │   │   ├── rivers.json
+│   │   │   └── siteRiskResponses.json
+│   │   ├── hooks
+│   │   │   ├── useAnimatedNumber.js
+│   │   │   └── useSiteRisk.js
+│   │   ├── index.css
+│   │   ├── main.jsx
+│   │   ├── pages
+│   │   │   ├── DataInsights.jsx
+│   │   │   └── SiteRiskAnalyzer.jsx
+│   │   ├── services
+│   │   │   ├── apiService.js
+│   │   │   ├── floodService.js
+│   │   │   ├── overpassService.js
+│   │   │   └── riskEngine.js
+│   │   └── utils
+│   │       └── formatters.js
+│   ├── tailwind.config.js
+│   └── vite.config.js
+├── print-tree.js
+├── print-tree2.js
+├── Terra_AI_Master_Build_Document.md
+├── theme-patch.js
+└── tree-output.txt

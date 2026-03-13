@@ -1,4 +1,4 @@
-import GlassPanel from '../shared/GlassPanel'
+import Panel from '../shared/Panel'
 import StatusBadge from '../shared/StatusBadge'
 import encroachmentData from '../../data/encroachments.json'
 import { formatDate } from '../../utils/formatters'
@@ -7,7 +7,7 @@ export default function EncroachmentTable() {
   const encroachments = encroachmentData.features.map(f => f.properties)
 
   return (
-    <GlassPanel className="w-full overflow-hidden shadow-xl border-border-default/80">
+    <Panel className="w-full overflow-hidden shadow-xl">
       <div className="px-5 py-4 border-b border-border-default/80 flex items-center justify-between bg-bg-surface/50">
         <div className="flex items-center gap-3">
           <div className="w-6 h-6 rounded-lg bg-risk-high-bg border border-risk-high/20 flex items-center justify-center">
@@ -52,6 +52,6 @@ export default function EncroachmentTable() {
           </tbody>
         </table>
       </div>
-    </GlassPanel>
+    </Panel>
   )
 }

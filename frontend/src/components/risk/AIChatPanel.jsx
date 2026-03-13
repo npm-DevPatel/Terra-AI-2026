@@ -58,11 +58,15 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
       setIsRecording(false)
       mediaRecorderRef.current?.stop()
 
-      // Play the appropriate response after a brief pause
+      // Show pulsing animation and processing state immediately
+      setShowPulsing(true)
+      setCurrentCaption('Processing your request...')
+
+      // Play the appropriate response after 4 seconds
       setTimeout(() => {
         const responseNumber = conversationStage + 1
         playAIResponse(responseNumber)
-      }, 500)
+      }, 4000)
     } else {
       // Start recording
       setCurrentCaption('')

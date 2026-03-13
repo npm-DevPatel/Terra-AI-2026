@@ -56,6 +56,7 @@ export default function SiteRiskAnalyzer() {
       const locationMarkers = prev.filter(m => m.element?.dataset?.type === 'location-search')
       return [...locationMarkers, marker]
     })
+
     assessSite(lat, lng)
   }, [markers, assessSite])
 

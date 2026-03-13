@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { formatCoordinate } from '../../utils/formatters'
 import { sendChatMessage } from '../../services/apiService'
 import microphoneIcon from '../../assets/microphone.png'
@@ -9,6 +10,7 @@ import response2Caption from '../../assets/response_audios/text/response_2_capti
 import response3Caption from '../../assets/response_audios/text/response_3_captions.txt?raw'
 
 export default function AIChatPanel({ siteRisk, loading, onQuery }) {
+  const navigate = useNavigate()
   const [messages, setMessages] = useState([
     {
       type: 'ai',
@@ -27,6 +29,7 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
   const [showPulsing, setShowPulsing] = useState(false)
   const [currentWordIndex, setCurrentWordIndex] = useState(-1)
   const [words, setWords] = useState([])
+  const [insightsLoading, setInsightsLoading] = useState(false)
 
   const mediaRecorderRef = useRef(null)
   const audioContextRef = useRef(null)
@@ -332,6 +335,30 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
               </span>
             ))}
           </p>
+          
+          {/* Get Insights Button - appears during 3rd response */}
+          {conversationStage === 2 && isPlaying && (
+            <button
+              onClick={() => {
+                setInsightsLoading(true)
+                setTimeout(() => {
+                  navigate('/insights', { state: { siteRisk } })
+                }, 10000)
+              }}
+              disabled={insightsLoading}
+              className="mt-3 w-full px-4 py-2.5 bg-accent-teal hover:bg-teal-600 disabled:opacity-60 disabled:cursor-not-allowed text-white text-[13px] font-semibold rounded-lg transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+            >
+              {insightsLoading ? (
+                <>
+                  <span className="animate-spin">⚙️</span> Analyzing Site...
+                </>
+              ) : (
+                <>
+                  Get Insights <span>→</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
       )}
 

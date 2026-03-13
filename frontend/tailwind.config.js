@@ -40,7 +40,7 @@ export default {
         'lg': 'var(--shadow-lg)',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Mary Poppins', 'system-ui', 'sans-serif'],
       },
       animation: {
         'fade-up': 'fadeUp 0.25s ease-out',

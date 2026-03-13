@@ -93,61 +93,61 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
   }
 
   return (
-    <div className="absolute top-4 right-4 z-10 w-96 h-[calc(100%-80px)] flex flex-col bg-white text-slate-900 shadow-xl rounded-xl border border-slate-200 animate-slide-in-right">
+    <div className="absolute top-4 right-4 z-10 w-96 h-[calc(100%-80px)] flex flex-col bg-bg-surface/95 backdrop-blur-md text-text-secondary shadow-xl rounded-2xl border border-border-default/80 ring-1 ring-black/5 animate-slide-in-right overflow-hidden">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 rounded-t-xl">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-cyan/20 to-accent-teal/20 border border-accent-cyan/30 flex items-center justify-center">
-            <span className="text-sm">🤖</span>
+      <div className="px-5 py-4 border-b border-border-default bg-bg-surface/90">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-accent-teal-light border border-accent-teal/30 flex items-center justify-center shadow-sm">
+            <span className="text-lg">🤖</span>
           </div>
           <div>
-            <div className="text-sm font-semibold text-slate-900">AI Risk Analyst</div>
-            <div className="text-[10px] text-accent-teal">Powered by Terra AI</div>
+            <div className="text-[15px] font-bold text-text-primary tracking-tight">AI Risk Analyst</div>
+            <div className="text-[11px] font-medium text-accent-teal">Powered by Terra AI</div>
           </div>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-transparent">
         {messages.map((msg, i) => (
-          <div key={i} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+          <div key={i} className={`flex w-full ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div
-              className={`max-w-[85%] rounded-xl px-3.5 py-2.5 text-sm ${
+              className={`max-w-[85%] px-3.5 py-2.5 text-sm ${
                 msg.type === 'user'
-                  ? 'bg-sky-100 text-slate-900 border border-sky-200'
-                  : 'bg-slate-100 text-slate-900 border border-slate-200'
+                  ? 'bg-accent-teal-light text-text-primary rounded-[12px_12px_4px_12px]'
+                  : 'bg-bg-elevated text-text-secondary rounded-[12px_12px_12px_4px]'
               } ${msg.loading ? 'animate-pulse' : 'animate-fade-in'}`}
             >
-              <p className="text-[13px] leading-relaxed">{msg.text}</p>
+              <p className="text-[13px] leading-relaxed font-medium">{msg.text}</p>
               {msg.report && (
-                <div className="mt-3 p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+                <div className="mt-3 p-3 rounded-lg bg-bg-surface border border-border-default space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-slate-500 uppercase tracking-wider">Risk Assessment</span>
+                    <span className="text-[10px] text-text-muted uppercase tracking-wider">Risk Assessment</span>
                     <StatusBadge level={msg.report.risk_level} />
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-[11px]">
                     <div>
-                      <span className="text-slate-500">Distance</span>
-                      <div className="text-slate-900 font-mono">{msg.report.distance_from_river_m}m</div>
+                      <span className="text-text-muted">Distance</span>
+                      <div className="text-text-primary font-mono font-semibold">{msg.report.distance_from_river_m}m</div>
                     </div>
                     <div>
-                      <span className="text-slate-500">River</span>
-                      <div className="text-slate-900">{msg.report.nearest_river}</div>
+                      <span className="text-text-muted">River</span>
+                      <div className="text-text-primary font-medium">{msg.report.nearest_river}</div>
                     </div>
                     <div>
-                      <span className="text-slate-500">Buffer</span>
-                      <div className={msg.report.inside_buffer ? 'text-threat-red' : 'text-status-safe'}>
+                      <span className="text-text-muted">Buffer</span>
+                      <div className={`font-semibold ${msg.report.inside_buffer ? 'text-risk-high' : 'text-accent-green'}`}>
                         {msg.report.inside_buffer ? 'Inside' : 'Outside'}
                       </div>
                     </div>
                     <div>
-                      <span className="text-slate-500">Flood Zone</span>
-                      <div className="text-slate-900 text-[10px]">{msg.report.flood_zone}</div>
+                      <span className="text-text-muted">Flood Zone</span>
+                      <div className="text-text-primary text-[10px] font-medium">{msg.report.flood_zone}</div>
                     </div>
                   </div>
-                  <div className="pt-2 border-t border-slate-200">
-                    <span className="text-[10px] text-slate-500">Recommendation</span>
-                    <p className="text-[11px] text-accent-cyan mt-0.5">{msg.report.recommendation}</p>
+                  <div className="pt-2 border-t border-border-default">
+                    <span className="text-[10px] text-text-muted uppercase tracking-wider">Recommendation</span>
+                    <p className="text-[11px] text-accent-teal mt-0.5">{msg.report.recommendation}</p>
                   </div>
                 </div>
               )}
@@ -158,23 +158,23 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
       </div>
 
       {/* Input */}
-      <form onSubmit={handleSubmit} className="p-3 border-t border-slate-200 bg-white rounded-b-xl">
-        <div className="flex gap-2">
+      <form onSubmit={handleSubmit} className="p-4 border-t border-border-default/80 bg-bg-surface/60 backdrop-blur-sm">
+        <div className="flex gap-3">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Is this site safe to build on?"
-            className="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-accent-cyan/60 transition-colors"
+            className="flex-1 bg-bg-surface/80 border border-border-strong/50 rounded-xl px-4 py-3 text-[13px] text-text-primary placeholder-text-ghost focus:outline-none focus:ring-2 focus:ring-accent-teal/20 focus:border-accent-teal transition-all shadow-sm"
             id="ai-chat-input"
             disabled={chatLoading}
           />
           <button
             type="submit"
             disabled={chatLoading}
-            className="px-3 py-2 bg-accent-cyan text-slate-900 rounded-lg hover:bg-cyan-300 transition-colors disabled:opacity-50"
+            className="px-4 py-3 bg-accent-teal text-white rounded-xl hover:bg-teal-600 hover:shadow-md transition-all disabled:opacity-50 flex items-center justify-center shadow-accent-teal/20 shadow-sm"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-5 h-5 -ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
             </svg>
           </button>

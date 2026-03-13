@@ -424,10 +424,10 @@ const MapContainer = forwardRef(function MapContainer(
         .setLngLat(e.lngLat)
         .setHTML(`
           <div style="min-width:180px">
-            <div style="font-weight:600;margin-bottom:4px;color:#00E5FF">${f.properties.name || 'River'}</div>
-            <div style="font-size:11px;color:#94A3B8">
+            <div style="font-weight:600;margin-bottom:4px;color:#0284C7">${f.properties.name || 'River'}</div>
+            <div style="font-size:11px;color:#64748B">
               Type: ${f.properties.waterway_type || 'river'}<br/>
-              Risk: <span style="color:${f.properties.risk_level === 'HIGH' ? '#EF4444' : f.properties.risk_level === 'MEDIUM' ? '#F97316' : '#22D3EE'}">${f.properties.risk_level}</span>
+              Risk: <span style="color:${f.properties.risk_level === 'HIGH' ? '#DC2626' : f.properties.risk_level === 'MEDIUM' ? '#EA580C' : '#0284C7'}">${f.properties.risk_level}</span>
             </div>
           </div>
         `)
@@ -442,9 +442,9 @@ const MapContainer = forwardRef(function MapContainer(
         .setLngLat(e.lngLat)
         .setHTML(`
           <div style="min-width:200px">
-            <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">${f.properties.id}</div>
-            <div style="font-weight:600;margin-bottom:6px;color:#F1F5F9">${f.properties.description}</div>
-            <div style="display:flex;gap:12px;font-size:12px;color:#94A3B8">
+            <div style="font-size:11px;color:#64748B;margin-bottom:4px">${f.properties.id}</div>
+            <div style="font-weight:600;margin-bottom:6px;color:#0F172A">${f.properties.description}</div>
+            <div style="display:flex;gap:12px;font-size:12px;color:#64748B">
               <span>🏞 ${f.properties.river_name}</span>
               <span>📏 ${f.properties.distance_from_river_m}m</span>
             </div>
@@ -467,8 +467,8 @@ const MapContainer = forwardRef(function MapContainer(
         .setLngLat(e.lngLat)
         .setHTML(`
           <div style="min-width:180px">
-            <div style="font-weight:600;margin-bottom:4px;color:#38BDF8">Flood Risk Zone</div>
-            <div style="font-size:11px;color:#94A3B8">
+            <div style="font-weight:600;margin-bottom:4px;color:#0284C7">Flood Risk Zone</div>
+            <div style="font-size:11px;color:#64748B">
               River: ${f.properties.river_name}<br/>
               Depth: <span style="font-weight:600;color:${f.properties.color}">${f.properties.flood_depth}</span><br/>
               Risk: <span style="font-weight:600;color:${f.properties.color}">${f.properties.risk_level}</span><br/>
@@ -488,7 +488,7 @@ const MapContainer = forwardRef(function MapContainer(
         .setHTML(`
           <div style="min-width:200px">
             <div style="font-weight:600;margin-bottom:4px;color:${f.properties.color}">⚠ ${f.properties.risk_level} Risk Zone</div>
-            <div style="font-size:11px;color:#94A3B8">
+            <div style="font-size:11px;color:#64748B">
               Score: <span style="font-weight:700;color:${f.properties.color}">${f.properties.risk_score}/100</span><br/>
               ${f.properties.description}
             </div>

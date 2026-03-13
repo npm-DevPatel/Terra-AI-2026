@@ -26,19 +26,19 @@ export default function Sidebar() {
   const location = useLocation()
 
   return (
-    <aside className="w-[72px] hover:w-[220px] transition-all duration-300 ease-in-out bg-terra-primary border-r border-terra-border/30 flex flex-col group overflow-hidden z-50">
+    <aside className="w-[72px] hover:w-[220px] transition-all duration-300 ease-in-out bg-bg-surface/95 backdrop-blur-md border-r border-border-default/80 flex flex-col group overflow-hidden z-50 relative">
       {/* Logo */}
-      <div className="flex items-center h-14 px-4 border-b border-terra-border/20">
+      <div className="flex items-center h-14 px-4 border-b border-border-default/80">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent-cyan/20 to-accent-teal/20 border border-accent-cyan/30 flex items-center justify-center flex-shrink-0">
-            <svg className="w-5 h-5 text-accent-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+          <div className="w-9 h-9 rounded-lg bg-accent-teal-light border border-accent-teal/30 flex items-center justify-center flex-shrink-0">
+            <svg className="w-5 h-5 text-accent-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
               <path d="M12 2L2 19h20L12 2z" strokeLinejoin="round" />
               <line x1="8" y1="14" x2="16" y2="14" strokeLinecap="round" />
             </svg>
           </div>
           <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-            <span className="text-sm font-bold text-accent-cyan tracking-wider">TERRA</span>
-            <span className="text-sm font-light text-slate-400 ml-1">AI</span>
+            <span className="text-sm font-bold text-accent-teal tracking-wider">TERRA</span>
+            <span className="text-sm font-light text-text-secondary ml-1">AI</span>
           </div>
         </div>
       </div>
@@ -52,13 +52,13 @@ export default function Sidebar() {
               <li key={item.path}>
                 <NavLink
                   to={item.path}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
+                  className={`flex items-center gap-3 px-3 py-2.5 transition-all duration-200 ${
                     isActive
-                      ? 'bg-accent-cyan/10 text-accent-cyan border-l-2 border-accent-cyan'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-terra-elevated/50'
+                      ? 'bg-accent-teal-light text-accent-teal border-l-[3px] border-accent-teal rounded-r-lg'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded-lg'
                   }`}
                 >
-                  <span className="flex-shrink-0">{item.icon}</span>
+                  <span className={`flex-shrink-0 ${isActive ? 'text-accent-teal' : 'text-text-ghost'}`}>{item.icon}</span>
                   <span className="text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
                     {item.label}
                   </span>

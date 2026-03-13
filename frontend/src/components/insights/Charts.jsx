@@ -14,9 +14,9 @@ const encroachmentTimelineData = [
 ]
 
 const riskDistributionData = [
-  { name: 'High', value: 15, color: '#EF4444' },
-  { name: 'Medium', value: 13, color: '#FBBF24' },
-  { name: 'Low', value: 10, color: '#10B981' },
+  { name: 'High', value: 15, color: 'var(--risk-high)' },
+  { name: 'Medium', value: 13, color: 'var(--risk-medium)' },
+  { name: 'Low', value: 10, color: 'var(--status-safe)' },
 ]
 
 const riverCorridorData = [
@@ -39,33 +39,34 @@ const monthlyTrendData = [
 ]
 
 const tooltipStyle = {
-  backgroundColor: 'rgba(5, 8, 16, 0.9)',
-  border: '1px solid rgba(0, 229, 255, 0.12)',
+  backgroundColor: 'var(--bg-surface)',
+  border: '1px solid var(--border-default)',
   borderRadius: '8px',
-  color: '#F1F5F9',
+  color: 'var(--text-secondary)',
   fontSize: '12px',
+  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
 }
 
 export function EncroachmentTimelineChart() {
   return (
-    <GlassPanel dark className="p-4">
+    <GlassPanel className="p-5 !bg-bg-surface border-border-default shadow-md rounded-xl">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Encroachments Over Time</h3>
-        <span className="text-[10px] font-mono text-threat-red">+100% since 2022</span>
+        <h3 className="text-base font-bold text-text-primary">Encroachments Over Time</h3>
+        <span className="text-[10px] font-mono text-risk-high">+100% since 2022</span>
       </div>
       <ResponsiveContainer width="100%" height={200}>
         <AreaChart data={encroachmentTimelineData}>
           <defs>
             <linearGradient id="gradRed" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#EF4444" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#EF4444" stopOpacity={0} />
+              <stop offset="5%" stopColor="var(--risk-high)" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="var(--risk-high)" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" />
-          <XAxis dataKey="year" stroke="#475569" fontSize={10} fontFamily="JetBrains Mono" />
-          <YAxis stroke="#475569" fontSize={10} fontFamily="JetBrains Mono" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-default)" />
+          <XAxis dataKey="year" stroke="var(--text-muted)" fontSize={10} fontFamily="JetBrains Mono" />
+          <YAxis stroke="var(--text-muted)" fontSize={10} fontFamily="JetBrains Mono" />
           <Tooltip contentStyle={tooltipStyle} />
-          <Area type="monotone" dataKey="count" stroke="#EF4444" fill="url(#gradRed)" strokeWidth={2} />
+          <Area type="monotone" dataKey="count" stroke="var(--risk-high)" fill="url(#gradRed)" strokeWidth={2} />
         </AreaChart>
       </ResponsiveContainer>
     </GlassPanel>
@@ -74,8 +75,8 @@ export function EncroachmentTimelineChart() {
 
 export function RiskDistributionChart() {
   return (
-    <GlassPanel dark className="p-4">
-      <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Risk Distribution</h3>
+    <GlassPanel className="p-5 !bg-bg-surface border-border-default shadow-md rounded-xl">
+      <h3 className="text-base font-bold text-text-primary mb-4">Risk Distribution</h3>
       <ResponsiveContainer width="100%" height={200}>
         <PieChart>
           <Pie
@@ -95,7 +96,7 @@ export function RiskDistributionChart() {
           <Legend
             verticalAlign="bottom"
             height={36}
-            formatter={(value) => <span className="text-xs text-slate-400">{value}</span>}
+            formatter={(value) => <span className="text-xs text-text-secondary font-medium">{value}</span>}
           />
         </PieChart>
       </ResponsiveContainer>
@@ -105,15 +106,15 @@ export function RiskDistributionChart() {
 
 export function RiverCorridorChart() {
   return (
-    <GlassPanel dark className="p-4">
-      <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Violations by River</h3>
+    <GlassPanel className="p-5 !bg-bg-surface border-border-default shadow-md rounded-xl">
+      <h3 className="text-base font-bold text-text-primary mb-4">Violations by River</h3>
       <ResponsiveContainer width="100%" height={200}>
         <BarChart data={riverCorridorData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" />
-          <XAxis dataKey="river" stroke="#475569" fontSize={10} fontFamily="JetBrains Mono" />
-          <YAxis stroke="#475569" fontSize={10} fontFamily="JetBrains Mono" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-default)" />
+          <XAxis dataKey="river" stroke="var(--text-muted)" fontSize={10} fontFamily="JetBrains Mono" />
+          <YAxis stroke="var(--text-muted)" fontSize={10} fontFamily="JetBrains Mono" />
           <Tooltip contentStyle={tooltipStyle} />
-          <Bar dataKey="violations" fill="#00E5FF" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="violations" fill="var(--accent-teal)" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </GlassPanel>
@@ -122,22 +123,22 @@ export function RiverCorridorChart() {
 
 export function MonthlyTrendChart() {
   return (
-    <GlassPanel dark className="p-4">
-      <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Monthly Detection Trend</h3>
+    <GlassPanel className="p-5 !bg-bg-surface border-border-default shadow-md rounded-xl">
+      <h3 className="text-base font-bold text-text-primary mb-4">Monthly Detection Trend</h3>
       <ResponsiveContainer width="100%" height={200}>
         <LineChart data={monthlyTrendData}>
           <defs>
-            <linearGradient id="gradCyan" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#00E5FF" stopOpacity={0.2} />
-              <stop offset="95%" stopColor="#00E5FF" stopOpacity={0} />
+            <linearGradient id="gradTeal" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="var(--accent-teal)" stopOpacity={0.2} />
+              <stop offset="95%" stopColor="var(--accent-teal)" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" />
-          <XAxis dataKey="month" stroke="#475569" fontSize={10} fontFamily="JetBrains Mono" />
-          <YAxis stroke="#475569" fontSize={10} fontFamily="JetBrains Mono" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-default)" />
+          <XAxis dataKey="month" stroke="var(--text-muted)" fontSize={10} fontFamily="JetBrains Mono" />
+          <YAxis stroke="var(--text-muted)" fontSize={10} fontFamily="JetBrains Mono" />
           <Tooltip contentStyle={tooltipStyle} />
-          <Line type="monotone" dataKey="violations" stroke="#F97316" strokeWidth={2} dot={{ fill: '#F97316', r: 3 }} />
-          <Line type="monotone" dataKey="area" stroke="#00E5FF" strokeWidth={2} dot={{ fill: '#00E5FF', r: 3 }} name="Area (m²)" />
+          <Line type="monotone" dataKey="violations" stroke="var(--risk-medium)" strokeWidth={2} dot={{ fill: 'var(--risk-medium)', r: 3 }} />
+          <Line type="monotone" dataKey="area" stroke="var(--accent-teal)" strokeWidth={2} dot={{ fill: 'var(--accent-teal)', r: 3 }} name="Area (m²)" />
         </LineChart>
       </ResponsiveContainer>
     </GlassPanel>
@@ -146,23 +147,23 @@ export function MonthlyTrendChart() {
 
 export function InsightCards() {
   const cards = [
-    { label: 'Rivers Monitored', value: 4, icon: '🏞', color: 'text-accent-cyan' },
+    { label: 'Rivers Monitored', value: 4, icon: '🏞', color: 'text-accent-teal' },
     { label: 'Detection Accuracy', value: 92, suffix: '%', icon: '🎯', color: 'text-status-safe' },
-    { label: 'River km Covered', value: 47.2, suffix: 'km', decimals: 1, icon: '🛰', color: 'text-accent-teal' },
-    { label: 'Weekly Alerts', value: 7, icon: '🔔', color: 'text-threat-orange' },
-    { label: 'Pending Reviews', value: 5, icon: '📋', color: 'text-status-warn' },
-    { label: 'Enforcement Actions', value: 3, icon: '⚖️', color: 'text-accent-cyan' },
+    { label: 'River km Covered', value: 47.2, suffix: 'km', decimals: 1, icon: '🛰', color: 'text-accent-blue' },
+    { label: 'Weekly Alerts', value: 7, icon: '🔔', color: 'text-risk-medium' },
+    { label: 'Pending Reviews', value: 5, icon: '📋', color: 'text-risk-medium' },
+    { label: 'Enforcement Actions', value: 3, icon: '⚖️', color: 'text-accent-teal' },
   ]
 
   return (
     <div className="grid grid-cols-3 gap-3">
       {cards.map((card, i) => (
-        <GlassPanel dark key={i} className="p-4 hover:scale-[1.02] transition-transform cursor-default">
+        <GlassPanel key={i} className="p-4 hover:scale-[1.02] transition-transform cursor-default !bg-bg-surface border-border-default shadow-sm">
           <div className="flex items-center gap-2 mb-2">
             <span>{card.icon}</span>
-            <span className="text-[10px] text-slate-500 uppercase tracking-wider">{card.label}</span>
+            <span className="text-[10px] text-text-muted uppercase tracking-wider font-semibold">{card.label}</span>
           </div>
-          <div className={`text-2xl ${card.color}`}>
+          <div className={`text-2xl font-bold ${card.color}`}>
             <CountUpNumber value={card.value} suffix={card.suffix || ''} decimals={card.decimals || 0} />
           </div>
         </GlassPanel>

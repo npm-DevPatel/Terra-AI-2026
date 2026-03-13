@@ -27,92 +27,95 @@ export default function ComparisonSlider() {
   }
 
   return (
-    <GlassPanel dark className="w-full overflow-hidden">
-      <div className="px-4 py-3 border-b border-terra-border/20 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <svg className="w-4 h-4 text-accent-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 5.25v14.25a1.5 1.5 0 001.5 1.5z" />
-          </svg>
-          <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Satellite Comparison</span>
+    <GlassPanel className="w-full overflow-hidden shadow-xl border-border-default/80">
+      <div className="px-5 py-4 border-b border-border-default/80 flex items-center justify-between bg-bg-surface/50">
+        <div className="flex items-center gap-3">
+          <div className="w-6 h-6 rounded-lg bg-accent-teal-light border border-accent-teal/30 flex items-center justify-center">
+            <svg className="w-3.5 h-3.5 text-accent-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 5.25v14.25a1.5 1.5 0 001.5 1.5z" />
+            </svg>
+          </div>
+          <span className="text-[13px] font-bold text-text-primary uppercase tracking-widest">Temporal Analysis</span>
         </div>
-        <div className="flex gap-4 text-[10px] font-mono">
-          <span className="text-slate-500">Before: <span className="text-slate-300">Jan 2024</span></span>
-          <span className="text-slate-500">After: <span className="text-accent-cyan">Mar 2026</span></span>
+        <div className="flex gap-5 text-[11px] font-bold">
+          <span className="text-text-muted flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-border-strong" />
+            JAN 2024
+          </span>
+          <span className="text-accent-teal flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent-teal animate-pulse" />
+            MAR 2026
+          </span>
         </div>
       </div>
 
       <div
         ref={containerRef}
-        className="relative h-72 cursor-ew-resize select-none"
+        className="relative h-80 cursor-ew-resize select-none comparison-slider"
         onMouseDown={handleMouseDown}
       >
         {/* Before (2024) */}
-        <div className="absolute inset-0 bg-terra-secondary">
-          <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-bg-base before">
+          <div className="w-full h-full flex items-center justify-center relative overflow-hidden bg-[#F0F4F2]">
             {/* Simulated satellite view - before */}
             <div className="absolute inset-0" style={{
               background: `
-                radial-gradient(ellipse at 30% 40%, rgba(34, 139, 34, 0.3) 0%, transparent 50%),
-                radial-gradient(ellipse at 60% 60%, rgba(34, 139, 34, 0.25) 0%, transparent 40%),
-                radial-gradient(ellipse at 50% 50%, rgba(0, 100, 0, 0.2) 0%, transparent 60%),
-                linear-gradient(180deg, #1a2332 0%, #0f1923 100%)
+                radial-gradient(circle at 30% 40%, #D4E2D9 0%, transparent 60%),
+                radial-gradient(circle at 70% 60%, #E8F0ED 0%, transparent 40%),
+                linear-gradient(135deg, #F7F9F8 0%, #DCE5E0 100%)
               `,
             }}>
-              {/* River line */}
-              <div className="absolute top-1/3 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent transform rotate-3" />
-              <div className="absolute top-[35%] left-0 right-0 h-8 bg-gradient-to-r from-transparent via-teal-500/10 to-transparent transform rotate-3" />
+              {/* River line (Natural) */}
+              <div className="absolute top-[38%] left-0 right-0 h-4 bg-accent-teal/10 blur-xl transform rotate-2" />
+              <div className="absolute top-[40%] left-0 right-0 h-1.5 bg-accent-teal/20 transform rotate-2" />
             </div>
-            <span className="relative z-10 text-xs font-mono text-slate-500 bg-terra-void/80 px-2 py-1 rounded">2024 — Clear vegetation</span>
+            <div className="relative z-10 text-[10px] font-bold text-text-primary bg-white/70 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/50 shadow-sm uppercase tracking-wider">
+              Pristine Riparian Zone — Jan 2024
+            </div>
           </div>
         </div>
 
         {/* After (2026) — clipped by slider */}
         <div
-          className="absolute inset-0 bg-terra-secondary"
+          className="absolute inset-0 bg-bg-base after"
           style={{ clipPath: `inset(0 0 0 ${position}%)` }}
         >
-          <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
+          <div className="w-full h-full flex items-center justify-center relative overflow-hidden bg-[#F0F4F2]">
             {/* Simulated satellite view - after (with encroachments) */}
             <div className="absolute inset-0" style={{
               background: `
-                radial-gradient(ellipse at 30% 40%, rgba(34, 139, 34, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 60% 60%, rgba(139, 69, 19, 0.2) 0%, transparent 40%),
-                radial-gradient(ellipse at 50% 50%, rgba(100, 80, 60, 0.15) 0%, transparent 60%),
-                linear-gradient(180deg, #1a2332 0%, #0f1923 100%)
+                radial-gradient(circle at 30% 40%, rgba(34, 139, 34, 0.1) 0%, transparent 60%),
+                radial-gradient(circle at 70% 60%, rgba(220, 38, 38, 0.05) 0%, transparent 40%),
+                linear-gradient(135deg, #F7F9F8 0%, #DCE5E0 100%)
               `,
             }}>
               {/* River line */}
-              <div className="absolute top-1/3 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent transform rotate-3" />
-              {/* Encroachment indicators */}
-              <div className="absolute top-[28%] left-[25%] w-6 h-6 bg-red-500/30 border border-red-500/50 rounded-sm animate-pulse" />
-              <div className="absolute top-[30%] left-[40%] w-8 h-5 bg-red-500/30 border border-red-500/50 rounded-sm animate-pulse" style={{ animationDelay: '0.5s' }} />
-              <div className="absolute top-[35%] left-[55%] w-5 h-7 bg-red-500/30 border border-red-500/50 rounded-sm animate-pulse" style={{ animationDelay: '1s' }} />
-              <div className="absolute top-[32%] left-[70%] w-7 h-5 bg-orange-500/30 border border-orange-500/50 rounded-sm animate-pulse" style={{ animationDelay: '0.3s' }} />
-              <div className="absolute top-[25%] left-[60%] w-4 h-4 bg-red-500/30 border border-red-500/50 rounded-sm animate-pulse" style={{ animationDelay: '0.7s' }} />
+              <div className="absolute top-[38%] left-0 right-0 h-4 bg-accent-teal/10 blur-xl transform rotate-2" />
+              <div className="absolute top-[40%] left-0 right-0 h-1.5 bg-accent-teal/20 transform rotate-2" />
+              
+              {/* Encroachment indicators - More subtle & premium */}
+              <div className="absolute top-[32%] left-[30%] w-10 h-7 bg-risk-high/10 border border-risk-high/40 rounded-lg shadow-[0_0_12px_rgba(220,38,38,0.1)] group transition-all" />
+              <div className="absolute top-[35%] left-[45%] w-12 h-8 bg-risk-high/10 border border-risk-high/40 rounded-lg shadow-[0_0_12px_rgba(220,38,38,0.1)]" />
+              <div className="absolute top-[30%] left-[65%] w-9 h-6 bg-risk-medium/10 border border-risk-medium/40 rounded-lg shadow-[0_0_12px_rgba(217,119,6,0.1)]" />
             </div>
-            <span className="relative z-10 text-xs font-mono text-threat-red bg-terra-void/80 px-2 py-1 rounded">2026 — New construction detected</span>
+            <div className="relative z-10 text-[10px] font-bold text-risk-high bg-white/70 backdrop-blur-sm px-3 py-1.5 rounded-full border border-risk-high/20 shadow-sm uppercase tracking-wider">
+              Multiple Encroachments — Mar 2026
+            </div>
           </div>
         </div>
 
         {/* Slider Handle */}
         <div
-          className="absolute top-0 bottom-0 z-10"
+          className="slider-handle group"
           style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
         >
-          <div className="w-1 h-full bg-accent-cyan shadow-[0_0_12px_rgba(0,229,255,0.5)]" />
-          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-terra-primary border-2 border-accent-cyan flex items-center justify-center shadow-[0_0_16px_rgba(0,229,255,0.4)]">
-            <svg className="w-4 h-4 text-accent-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l4-4 4 4M16 15l-4 4-4-4" />
-            </svg>
+          <div className="flex flex-col items-center justify-center h-full gap-2">
+            <div className="w-8 h-8 rounded-full bg-white border-2 border-accent-teal shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+              <svg className="w-4 h-4 text-accent-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+              </svg>
+            </div>
           </div>
-        </div>
-
-        {/* Labels */}
-        <div className="absolute top-3 left-3 z-10">
-          <span className="text-[10px] font-mono text-slate-400 bg-terra-void/80 px-2 py-1 rounded-full border border-terra-border/20">BEFORE</span>
-        </div>
-        <div className="absolute top-3 right-3 z-10">
-          <span className="text-[10px] font-mono text-accent-cyan bg-terra-void/80 px-2 py-1 rounded-full border border-accent-cyan/20">AFTER</span>
         </div>
       </div>
     </GlassPanel>

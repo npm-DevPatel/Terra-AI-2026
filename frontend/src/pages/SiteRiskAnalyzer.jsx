@@ -17,9 +17,9 @@ export default function SiteRiskAnalyzer() {
     const el = document.createElement('div')
     el.style.cssText = `
       width: 24px; height: 24px; border-radius: 50%;
-      background: radial-gradient(circle, #00E5FF 30%, rgba(0, 229, 255, 0.3) 70%);
-      border: 2px solid #00E5FF;
-      box-shadow: 0 0 16px rgba(0, 229, 255, 0.6);
+      background: radial-gradient(circle, var(--accent-teal) 30%, rgba(13, 148, 136, 0.3) 70%);
+      border: 2px solid var(--accent-teal);
+      box-shadow: 0 0 16px rgba(13, 148, 136, 0.6);
       animation: pulse 2s ease-in-out infinite;
       cursor: pointer;
     `
@@ -33,20 +33,20 @@ export default function SiteRiskAnalyzer() {
   }, [markers, assessSite])
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full bg-bg-base">
       <MapContainer onMapClick={handleMapClick} interactive>
         <SiteRiskReportCard data={result} />
         <AIChatPanel siteRisk={result} loading={loading} />
 
         {/* Instruction overlay (shown when no result) */}
         {!result && !loading && (
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 animate-fade-in">
-            <div className="glass-panel-dark px-6 py-3 flex items-center gap-3">
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 animate-fade-in shadow-md rounded-xl">
+            <div className="bg-bg-surface border border-border-default rounded-xl px-6 py-3 flex items-center gap-3">
               <div className="relative">
-                <div className="w-3 h-3 rounded-full bg-accent-cyan" />
-                <div className="w-3 h-3 rounded-full bg-accent-cyan absolute inset-0 animate-ping opacity-50" />
+                <div className="w-3 h-3 rounded-full bg-accent-teal" />
+                <div className="w-3 h-3 rounded-full bg-accent-teal absolute inset-0 animate-ping opacity-50" />
               </div>
-              <span className="text-sm text-slate-400">Click anywhere on the map to assess site risk</span>
+              <span className="text-sm text-text-secondary font-medium tracking-wide">Click anywhere on the map to assess site risk</span>
             </div>
           </div>
         )}

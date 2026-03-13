@@ -7,6 +7,12 @@ export default defineConfig({
   envPrefix: ['VITE_', 'GOOGLE_EARTH_'],
   server: {
     port: 5173,
-    open: true
+    open: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+    },
   }
 })

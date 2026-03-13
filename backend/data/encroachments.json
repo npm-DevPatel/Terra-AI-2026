@@ -1,0 +1,221 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENC-2025-001",
+        "river_id": "mathare-river",
+        "river_name": "Mathare River",
+        "detected_date": "2025-03-15",
+        "baseline_date": "2024-01-10",
+        "confidence": 0.92,
+        "severity": "HIGH",
+        "area_sqm": 245,
+        "distance_from_river_m": 12,
+        "structure_type": "Residential",
+        "status": "Active Violation",
+        "description": "New residential structure detected 12m from Mathare River centerline. Concrete foundation with partial roofing visible in latest imagery."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [36.8568, -1.2610],
+          [36.8573, -1.2610],
+          [36.8573, -1.2615],
+          [36.8568, -1.2615],
+          [36.8568, -1.2610]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENC-2025-002",
+        "river_id": "mathare-river",
+        "river_name": "Mathare River",
+        "detected_date": "2025-01-22",
+        "baseline_date": "2024-01-10",
+        "confidence": 0.88,
+        "severity": "HIGH",
+        "area_sqm": 180,
+        "distance_from_river_m": 8,
+        "structure_type": "Commercial",
+        "status": "Active Violation",
+        "description": "Commercial structure 8m from river. Multiple roof segments visible. Extends into floodplain."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [36.8540, -1.2605],
+          [36.8546, -1.2605],
+          [36.8546, -1.2612],
+          [36.8540, -1.2612],
+          [36.8540, -1.2605]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENC-2025-003",
+        "river_id": "ngong-river",
+        "river_name": "Ngong River",
+        "detected_date": "2025-02-08",
+        "baseline_date": "2024-06-15",
+        "confidence": 0.76,
+        "severity": "MEDIUM",
+        "area_sqm": 120,
+        "distance_from_river_m": 22,
+        "structure_type": "Residential",
+        "status": "Under Review",
+        "description": "Small residential structure detected 22m from Ngong River. Within buffer zone but partially behind existing structures."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [36.8085, -1.2908],
+          [36.8090, -1.2908],
+          [36.8090, -1.2912],
+          [36.8085, -1.2912],
+          [36.8085, -1.2908]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENC-2025-004",
+        "river_id": "mathare-river",
+        "river_name": "Mathare River",
+        "detected_date": "2024-11-30",
+        "baseline_date": "2024-01-10",
+        "confidence": 0.95,
+        "severity": "HIGH",
+        "area_sqm": 310,
+        "distance_from_river_m": 5,
+        "structure_type": "Residential",
+        "status": "Active Violation",
+        "description": "Large residential structure only 5m from Mathare River. Critical flood risk. Directly on the historical floodplain."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [36.8598, -1.2582],
+          [36.8604, -1.2582],
+          [36.8604, -1.2590],
+          [36.8598, -1.2590],
+          [36.8598, -1.2582]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENC-2025-005",
+        "river_id": "mathare-river",
+        "river_name": "Mathare River",
+        "detected_date": "2025-03-01",
+        "baseline_date": "2024-01-10",
+        "confidence": 0.84,
+        "severity": "MEDIUM",
+        "area_sqm": 95,
+        "distance_from_river_m": 18,
+        "structure_type": "Storage",
+        "status": "Under Review",
+        "description": "Small storage or workshop structure 18m from Mathare River. Partial impervious surface detected."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [36.8495, -1.2628],
+          [36.8499, -1.2628],
+          [36.8499, -1.2632],
+          [36.8495, -1.2632],
+          [36.8495, -1.2628]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENC-2024-006",
+        "river_id": "nairobi-river",
+        "river_name": "Nairobi River",
+        "detected_date": "2024-09-14",
+        "baseline_date": "2024-01-10",
+        "confidence": 0.91,
+        "severity": "HIGH",
+        "area_sqm": 420,
+        "distance_from_river_m": 10,
+        "structure_type": "Mixed Use",
+        "status": "Active Violation",
+        "description": "Mixed-use development 10m from Nairobi River. Multiple storeys detected. High-confidence encroachment."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [36.8700, -1.2828],
+          [36.8708, -1.2828],
+          [36.8708, -1.2836],
+          [36.8700, -1.2836],
+          [36.8700, -1.2828]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENC-2024-007",
+        "river_id": "nairobi-river",
+        "river_name": "Nairobi River",
+        "detected_date": "2024-07-20",
+        "baseline_date": "2024-01-10",
+        "confidence": 0.72,
+        "severity": "MEDIUM",
+        "area_sqm": 150,
+        "distance_from_river_m": 25,
+        "structure_type": "Residential",
+        "status": "Flagged",
+        "description": "Residential structure 25m from Nairobi River. Near buffer edge. Low-confidence but flagged for review."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [36.8550, -1.2892],
+          [36.8555, -1.2892],
+          [36.8555, -1.2897],
+          [36.8550, -1.2897],
+          [36.8550, -1.2892]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ENC-2025-008",
+        "river_id": "ngong-river",
+        "river_name": "Ngong River",
+        "detected_date": "2025-02-28",
+        "baseline_date": "2024-06-15",
+        "confidence": 0.81,
+        "severity": "MEDIUM",
+        "area_sqm": 200,
+        "distance_from_river_m": 15,
+        "structure_type": "Commercial",
+        "status": "Under Review",
+        "description": "Commercial kiosk cluster 15m from Ngong River. Impervious surface expansion detected over 6-month period."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [36.8175, -1.2932],
+          [36.8181, -1.2932],
+          [36.8181, -1.2938],
+          [36.8175, -1.2938],
+          [36.8175, -1.2932]
+        ]]
+      }
+    }
+  ]
+}

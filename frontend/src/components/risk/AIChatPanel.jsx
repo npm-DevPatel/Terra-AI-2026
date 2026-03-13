@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import GlassPanel from '../shared/GlassPanel'
 import StatusBadge from '../shared/StatusBadge'
 import { formatCoordinate } from '../../utils/formatters'
+import { sendChatMessage } from '../../services/apiService'
 
 export default function AIChatPanel({ siteRisk, loading, onQuery }) {
   const [messages, setMessages] = useState([
@@ -11,6 +12,7 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
     },
   ])
   const [input, setInput] = useState('')
+  const [chatLoading, setChatLoading] = useState(false)
   const messagesEndRef = useRef(null)
 
   useEffect(() => {
@@ -40,31 +42,55 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
     }
   }, [loading])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!input.trim()) return
+    if (!input.trim() || chatLoading) return
 
-    setMessages(prev => [...prev, { type: 'user', text: input }])
-
-    if (input.toLowerCase().includes('safe') || input.toLowerCase().includes('build') || input.toLowerCase().includes('risk')) {
-      setMessages(prev => [
-        ...prev,
-        {
-          type: 'ai',
-          text: 'Please drop a pin on the map to assess a specific location. Click anywhere on the map to place a marker, and I\'ll analyze the site risk for that exact position.',
-        },
-      ])
-    } else {
-      setMessages(prev => [
-        ...prev,
-        {
-          type: 'ai',
-          text: 'I can help you assess site risk for any location in Nairobi. Try asking "Is this site safe to build on?" after dropping a pin on the map, or ask about riparian buffer regulations.',
-        },
-      ])
-    }
-
+    const userMessage = input.trim()
+    setMessages(prev => [...prev, { type: 'user', text: userMessage }])
     setInput('')
+    setChatLoading(true)
+
+    // Show thinking indicator
+    setMessages(prev => [
+      ...prev,
+      { type: 'ai', text: '🤖 Thinking...', loading: true },
+    ])
+
+    try {
+      // Call the backend AI chat endpoint
+      const lat = siteRisk?.site?.lat || null
+      const lng = siteRisk?.site?.lng || null
+      const data = await sendChatMessage(userMessage, lat, lng)
+
+      // Remove thinking indicator and add real response
+      setMessages(prev => {
+        const filtered = prev.filter(m => !m.loading || m.text !== '🤖 Thinking...')
+        return [
+          ...filtered,
+          {
+            type: 'ai',
+            text: data.response,
+            report: data.site_context || null,
+          },
+        ]
+      })
+    } catch (error) {
+      console.warn('[Terra AI] Chat API failed, using local fallback:', error.message)
+      // Fallback to local responses
+      setMessages(prev => {
+        const filtered = prev.filter(m => !m.loading || m.text !== '🤖 Thinking...')
+        return [
+          ...filtered,
+          {
+            type: 'ai',
+            text: _localChatFallback(userMessage, siteRisk),
+          },
+        ]
+      })
+    } finally {
+      setChatLoading(false)
+    }
   }
 
   return (
@@ -142,10 +168,12 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
             placeholder="Is this site safe to build on?"
             className="flex-1 bg-terra-void/60 border border-terra-border/20 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-accent-cyan/40 transition-colors"
             id="ai-chat-input"
+            disabled={chatLoading}
           />
           <button
             type="submit"
-            className="px-3 py-2 bg-accent-cyan/15 border border-accent-cyan/30 rounded-lg text-accent-cyan hover:bg-accent-cyan/25 transition-colors"
+            disabled={chatLoading}
+            className="px-3 py-2 bg-accent-cyan/15 border border-accent-cyan/30 rounded-lg text-accent-cyan hover:bg-accent-cyan/25 transition-colors disabled:opacity-50"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
@@ -155,4 +183,25 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
       </form>
     </GlassPanel>
   )
+}
+
+/**
+ * Local fallback chat when backend is unreachable
+ */
+function _localChatFallback(message, siteRisk) {
+  const msg = message.toLowerCase()
+
+  if (siteRisk) {
+    if (msg.includes('safe') || msg.includes('build') || msg.includes('risk')) {
+      return siteRisk.inside_buffer
+        ? `Based on my analysis, this site is NOT safe to build on. It is ${siteRisk.distance_from_river_m}m from ${siteRisk.nearest_river}, inside the legally protected 30-metre riparian buffer. Risk level: ${siteRisk.risk_level}.`
+        : `This site is ${siteRisk.distance_from_river_m}m from ${siteRisk.nearest_river}. ${siteRisk.risk_level === 'LOW' ? 'It is clear for construction with standard approvals.' : 'Moderate risk — proceed with caution.'}`
+    }
+  }
+
+  if (msg.includes('safe') || msg.includes('build') || msg.includes('risk')) {
+    return 'Please drop a pin on the map to assess a specific location. Click anywhere on the map to place a marker, and I\'ll analyze the site risk for that exact position.'
+  }
+
+  return 'I can help you assess site risk for any location in Nairobi. Try asking "Is this site safe to build on?" after dropping a pin on the map, or ask about riparian buffer regulations.'
 }

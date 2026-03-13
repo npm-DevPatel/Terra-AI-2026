@@ -4,31 +4,105 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import riversData from '../../data/rivers.json'
 import encroachmentData from '../../data/encroachments.json'
 
-// Free dark basemap — no API key needed
-const DARK_STYLE = {
+const NAIROBI_CENTER = [36.8219, -1.2921]
+
+const PLACE_LABELS_SOURCE = {
+  type: 'raster',
+  tiles: ['https://basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}.png'],
+  tileSize: 256,
+  attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+}
+
+const FALLBACK_SATELLITE_STYLE = {
   version: 8,
-  name: 'Terra Dark',
+  name: 'Satellite Fallback',
   sources: {
-    'carto-dark': {
+    'esri-world-imagery': {
       type: 'raster',
       tiles: [
-        'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
-        'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
-        'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
+        'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       ],
       tileSize: 256,
-      attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      attribution: '&copy; Esri',
     },
+    'place-labels': PLACE_LABELS_SOURCE,
   },
   layers: [
     {
-      id: 'carto-dark-layer',
+      id: 'esri-world-imagery-layer',
       type: 'raster',
-      source: 'carto-dark',
+      source: 'esri-world-imagery',
       minzoom: 0,
       maxzoom: 19,
     },
+    {
+      id: 'place-labels-layer',
+      type: 'raster',
+      source: 'place-labels',
+      minzoom: 3,
+      maxzoom: 20,
+    },
   ],
+}
+
+function buildGoogleSatelliteStyle(sessionToken, apiKey) {
+  return {
+    version: 8,
+    name: 'Google Satellite',
+    sources: {
+      'google-satellite': {
+        type: 'raster',
+        tiles: [
+          `https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session=${sessionToken}&key=${apiKey}`,
+        ],
+        tileSize: 256,
+        attribution: '&copy; Google',
+      },
+      'place-labels': PLACE_LABELS_SOURCE,
+    },
+    layers: [
+      {
+        id: 'google-satellite-layer',
+        type: 'raster',
+        source: 'google-satellite',
+        minzoom: 0,
+        maxzoom: 20,
+      },
+      {
+        id: 'place-labels-layer',
+        type: 'raster',
+        source: 'place-labels',
+        minzoom: 3,
+        maxzoom: 20,
+      },
+    ],
+  }
+}
+
+async function createGoogleTilesSession(apiKey) {
+  const response = await fetch(`https://tile.googleapis.com/v1/createSession?key=${apiKey}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      mapType: 'satellite',
+      language: 'en-US',
+      region: 'KE',
+      scale: 'scaleFactor1x',
+    }),
+  })
+
+  if (!response.ok) {
+    throw new Error(`Google Tiles session request failed (${response.status})`)
+  }
+
+  const data = await response.json()
+  if (!data.session) {
+    throw new Error('Google Tiles session missing in response')
+  }
+
+  return data.session
 }
 
 export default function MapContainer({ onMapClick, interactive = true, center, zoom, children }) {
@@ -38,22 +112,43 @@ export default function MapContainer({ onMapClick, interactive = true, center, z
   const animationRef = useRef(null)
 
   useEffect(() => {
-    if (mapRef.current) return
+    if (mapRef.current || !mapContainerRef.current) return
 
-    const map = new maplibregl.Map({
-      container: mapContainerRef.current,
-      style: DARK_STYLE,
-      center: center || [36.8219, -1.2921],
-      zoom: zoom || 12,
-      pitch: 40,
-      bearing: -15,
-      antialias: true,
-    })
+    let isCancelled = false
 
-    map.addControl(new maplibregl.NavigationControl({ showCompass: true }), 'top-right')
+    const initMap = async () => {
+      const apiKey = import.meta.env.GOOGLE_EARTH_API_KEY || import.meta.env.VITE_GOOGLE_EARTH_API_KEY
+      let style = FALLBACK_SATELLITE_STYLE
 
-    map.on('load', () => {
+      if (apiKey) {
+        try {
+          const sessionToken = await createGoogleTilesSession(apiKey)
+          if (!isCancelled) {
+            style = buildGoogleSatelliteStyle(sessionToken, apiKey)
+          }
+        } catch (error) {
+          // Keep map visible even if Google session creation fails.
+          console.warn('Google satellite tiles unavailable, using fallback imagery:', error)
+        }
+      }
+
+      if (isCancelled) return
+
+      const map = new maplibregl.Map({
+        container: mapContainerRef.current,
+        style,
+        center: center || NAIROBI_CENTER,
+        zoom: zoom || 13,
+        pitch: 40,
+        bearing: -15,
+        antialias: true,
+      })
+
       mapRef.current = map
+
+      map.addControl(new maplibregl.NavigationControl({ showCompass: true }), 'top-right')
+
+      map.on('load', () => {
 
       // ── River Network (Glow Layer — wide blurred line) ──
       map.addSource('rivers', {
@@ -256,17 +351,23 @@ export default function MapContainer({ onMapClick, interactive = true, center, z
         })
       }
 
-      setMapLoaded(true)
-    })
+        setMapLoaded(true)
+      })
+    }
+
+    initMap()
 
     return () => {
+      isCancelled = true
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
       }
-      map.remove()
+      if (mapRef.current) {
+        mapRef.current.remove()
+      }
       mapRef.current = null
     }
-  }, [])
+  }, [center, interactive, onMapClick, zoom])
 
   return (
     <div className="relative w-full h-full">

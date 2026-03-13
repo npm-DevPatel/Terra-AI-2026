@@ -8,6 +8,7 @@ import { fetchFloodData, generateFloodZones } from '../../services/floodService'
 import { generateRiskZones } from '../../services/riskEngine'
 
 const NAIROBI_CENTER = [36.8219, -1.2921]
+const FLOOD_PRONE_RIVER_IDS = new Set(['nairobi-river', 'mathare-river', 'ngong-river'])
 
 // ── Tile Sources ──
 const PLACE_LABELS_SOURCE = {

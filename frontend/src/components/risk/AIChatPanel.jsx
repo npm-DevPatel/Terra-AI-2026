@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react'
-import GlassPanel from '../shared/GlassPanel'
 import StatusBadge from '../shared/StatusBadge'
 import { formatCoordinate } from '../../utils/formatters'
 import { sendChatMessage } from '../../services/apiService'
@@ -94,15 +93,15 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
   }
 
   return (
-    <GlassPanel dark className="absolute top-4 right-4 z-10 w-96 h-[calc(100%-80px)] flex flex-col animate-slide-in-right">
+    <div className="absolute top-4 right-4 z-10 w-96 h-[calc(100%-80px)] flex flex-col bg-white text-slate-900 shadow-xl rounded-xl border border-slate-200 animate-slide-in-right">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-terra-border/20">
+      <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 rounded-t-xl">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-cyan/20 to-accent-teal/20 border border-accent-cyan/30 flex items-center justify-center">
             <span className="text-sm">🤖</span>
           </div>
           <div>
-            <div className="text-sm font-semibold text-slate-200">AI Risk Analyst</div>
+            <div className="text-sm font-semibold text-slate-900">AI Risk Analyst</div>
             <div className="text-[10px] text-accent-teal">Powered by Terra AI</div>
           </div>
         </div>
@@ -115,13 +114,13 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
             <div
               className={`max-w-[85%] rounded-xl px-3.5 py-2.5 text-sm ${
                 msg.type === 'user'
-                  ? 'bg-accent-cyan/15 text-slate-200 border border-accent-cyan/20'
-                  : 'bg-terra-void/60 text-slate-300 border border-terra-border/10'
+                  ? 'bg-sky-100 text-slate-900 border border-sky-200'
+                  : 'bg-slate-100 text-slate-900 border border-slate-200'
               } ${msg.loading ? 'animate-pulse' : 'animate-fade-in'}`}
             >
               <p className="text-[13px] leading-relaxed">{msg.text}</p>
               {msg.report && (
-                <div className="mt-3 p-3 rounded-lg bg-terra-primary/80 border border-terra-border/20 space-y-2">
+                <div className="mt-3 p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] text-slate-500 uppercase tracking-wider">Risk Assessment</span>
                     <StatusBadge level={msg.report.risk_level} />
@@ -129,11 +128,11 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
                   <div className="grid grid-cols-2 gap-2 text-[11px]">
                     <div>
                       <span className="text-slate-500">Distance</span>
-                      <div className="text-slate-200 font-mono">{msg.report.distance_from_river_m}m</div>
+                      <div className="text-slate-900 font-mono">{msg.report.distance_from_river_m}m</div>
                     </div>
                     <div>
                       <span className="text-slate-500">River</span>
-                      <div className="text-slate-200">{msg.report.nearest_river}</div>
+                      <div className="text-slate-900">{msg.report.nearest_river}</div>
                     </div>
                     <div>
                       <span className="text-slate-500">Buffer</span>
@@ -143,10 +142,10 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
                     </div>
                     <div>
                       <span className="text-slate-500">Flood Zone</span>
-                      <div className="text-slate-200 text-[10px]">{msg.report.flood_zone}</div>
+                      <div className="text-slate-900 text-[10px]">{msg.report.flood_zone}</div>
                     </div>
                   </div>
-                  <div className="pt-2 border-t border-terra-border/10">
+                  <div className="pt-2 border-t border-slate-200">
                     <span className="text-[10px] text-slate-500">Recommendation</span>
                     <p className="text-[11px] text-accent-cyan mt-0.5">{msg.report.recommendation}</p>
                   </div>
@@ -159,21 +158,21 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
       </div>
 
       {/* Input */}
-      <form onSubmit={handleSubmit} className="p-3 border-t border-terra-border/20">
+      <form onSubmit={handleSubmit} className="p-3 border-t border-slate-200 bg-white rounded-b-xl">
         <div className="flex gap-2">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Is this site safe to build on?"
-            className="flex-1 bg-terra-void/60 border border-terra-border/20 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-accent-cyan/40 transition-colors"
+            className="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-accent-cyan/60 transition-colors"
             id="ai-chat-input"
             disabled={chatLoading}
           />
           <button
             type="submit"
             disabled={chatLoading}
-            className="px-3 py-2 bg-accent-cyan/15 border border-accent-cyan/30 rounded-lg text-accent-cyan hover:bg-accent-cyan/25 transition-colors disabled:opacity-50"
+            className="px-3 py-2 bg-accent-cyan text-slate-900 rounded-lg hover:bg-cyan-300 transition-colors disabled:opacity-50"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
@@ -181,7 +180,7 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
           </button>
         </div>
       </form>
-    </GlassPanel>
+    </div>
   )
 }
 

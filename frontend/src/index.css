@@ -35,8 +35,8 @@ html, body, #root {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: var(--bg-void);
-  color: #F1F5F9;
+  background-color: #ffffff;
+  color: #020617;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

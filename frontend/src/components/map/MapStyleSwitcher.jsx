@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import GlassPanel from '../shared/GlassPanel'
+import Panel from '../shared/Panel'
 
 const MAP_STYLES = [
   {
@@ -33,7 +33,7 @@ export default function MapStyleSwitcher({ activeStyle = 'satellite', onStyleCha
 
   return (
     <div className="absolute top-4 left-4 z-10">
-      <GlassPanel className="p-2.5 shadow-xl border-border-default/80 max-w-[200px]">
+      <Panel className="p-2.5 shadow-xl max-w-[200px]">
         <div className="flex items-center gap-2.5 mb-2.5 px-1.5">
           <div className="w-4.5 h-4.5 text-accent-teal">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -74,7 +74,7 @@ export default function MapStyleSwitcher({ activeStyle = 'satellite', onStyleCha
             </button>
           ))}
         </div>
-      </GlassPanel>
+      </Panel>
     </div>
   )
 }

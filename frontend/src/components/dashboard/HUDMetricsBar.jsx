@@ -1,6 +1,6 @@
 import CountUpNumber from '../shared/CountUpNumber'
 import metrics from '../../data/metrics.json'
-import GlassPanel from '../shared/GlassPanel'
+import Panel from '../shared/Panel'
 
 const items = [
   { label: 'Active Threats', value: metrics.active_encroachments, icon: '⚠️', textClass: 'text-risk-high', fillClass: 'bg-risk-high/10' },
@@ -12,7 +12,7 @@ const items = [
 export default function HUDMetricsBar() {
   return (
     <div className="absolute bottom-20 left-4 z-10 animate-fade-up">
-      <GlassPanel className="px-5 py-4 flex gap-4">
+      <Panel className="px-5 py-4 flex gap-4">
         {items.map((item, i) => (
           <div
             key={i}
@@ -32,7 +32,7 @@ export default function HUDMetricsBar() {
             </div>
           </div>
         ))}
-      </GlassPanel>
+      </Panel>
     </div>
   )
 }

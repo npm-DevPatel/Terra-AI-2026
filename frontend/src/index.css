@@ -13,13 +13,13 @@
   --bg-elevated: #EEF4F2;
   --bg-sunken: #E8F0ED;
 
-  --border-default: #C8DAD3;
-  --border-strong: #9DBFB4;
+  --border-default: #B0CEC4;
+  --border-strong: #8AB5A8;
 
   --text-primary: #0F2420;
   --text-secondary: #2D4A44;
-  --text-muted: #5C7C74;
-  --text-ghost: #8AADA6;
+  --text-muted: #4A6B63;
+  --text-ghost: #6B9A92;
 
   --accent-teal: #0D9488;
   --accent-teal-light: #CCFBF1;
@@ -187,4 +187,17 @@ input[type="range"].timeline-slider::-moz-range-thumb {
 @keyframes breathe {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.6; }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }

@@ -94,7 +94,7 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
   }
 
   return (
-    <div className="absolute top-4 right-4 z-10 w-96 h-[calc(100%-80px)] flex flex-col bg-bg-surface/95 backdrop-blur-md text-text-secondary shadow-xl rounded-2xl border border-border-default/80 ring-1 ring-black/5 animate-slide-in-right overflow-hidden">
+    <div className="absolute top-4 right-4 z-10 w-96 h-[calc(100%-80px)] flex flex-col bg-white text-text-secondary shadow-xl rounded-2xl border border-border-default animate-slide-in-right overflow-hidden">
       {/* Header */}
       <div className="px-5 py-4 border-b border-border-default bg-bg-surface/90">
         <div className="flex items-center gap-3">

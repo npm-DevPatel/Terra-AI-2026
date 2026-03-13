@@ -159,13 +159,8 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
       </div>
 
       {/* Input */}
-<<<<<<< HEAD
       <form onSubmit={handleSubmit} className="p-4 border-t border-border-default/80 bg-bg-surface/60 backdrop-blur-sm">
-        <div className="flex gap-3">
-=======
-      <form onSubmit={handleSubmit} className="p-3 border-t border-slate-200 bg-white rounded-b-xl">
-        <div className="flex items-center gap-2">
->>>>>>> d0f0fc2 (Added the microphone png)
+        <div className="flex items-center gap-3">
           <input
             type="text"
             value={input}
@@ -177,7 +172,7 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
           />
           <button
             type="button"
-            className="flex items-center justify-center w-9 h-9 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 transition-colors"
+            className="flex items-center justify-center w-9 h-9 rounded-lg border border-border-default/80 bg-bg-surface hover:bg-bg-elevated transition-colors"
             aria-label="Voice input (coming soon)"
           >
             <img src={microphoneIcon} alt="Microphone" className="w-4 h-4" />

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-const GOOGLE_MAPS_API_KEY = 'AIzaSyASgaph3jrYOC3VYrAZYQKgbrrrA5rHJa8'
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 
 export default function DataInsights() {
   const location = useLocation()

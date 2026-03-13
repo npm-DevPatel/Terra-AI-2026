@@ -1,5 +1,5 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts'
-import GlassPanel from '../shared/GlassPanel'
+import Panel from '../shared/Panel'
 import CountUpNumber from '../shared/CountUpNumber'
 
 // ── Mock Chart Data ──
@@ -49,7 +49,7 @@ const tooltipStyle = {
 
 export function EncroachmentTimelineChart() {
   return (
-    <GlassPanel className="p-5 !bg-bg-surface border-border-default shadow-md rounded-xl">
+    <Panel className="p-5 shadow-md rounded-xl">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base font-bold text-text-primary">Encroachments Over Time</h3>
         <span className="text-[10px] font-mono text-risk-high">+100% since 2022</span>
@@ -69,13 +69,13 @@ export function EncroachmentTimelineChart() {
           <Area type="monotone" dataKey="count" stroke="var(--risk-high)" fill="url(#gradRed)" strokeWidth={2} />
         </AreaChart>
       </ResponsiveContainer>
-    </GlassPanel>
+    </Panel>
   )
 }
 
 export function RiskDistributionChart() {
   return (
-    <GlassPanel className="p-5 !bg-bg-surface border-border-default shadow-md rounded-xl">
+    <Panel className="p-5 shadow-md rounded-xl">
       <h3 className="text-base font-bold text-text-primary mb-4">Risk Distribution</h3>
       <ResponsiveContainer width="100%" height={200}>
         <PieChart>
@@ -100,13 +100,13 @@ export function RiskDistributionChart() {
           />
         </PieChart>
       </ResponsiveContainer>
-    </GlassPanel>
+    </Panel>
   )
 }
 
 export function RiverCorridorChart() {
   return (
-    <GlassPanel className="p-5 !bg-bg-surface border-border-default shadow-md rounded-xl">
+    <Panel className="p-5 shadow-md rounded-xl">
       <h3 className="text-base font-bold text-text-primary mb-4">Violations by River</h3>
       <ResponsiveContainer width="100%" height={200}>
         <BarChart data={riverCorridorData}>
@@ -117,13 +117,13 @@ export function RiverCorridorChart() {
           <Bar dataKey="violations" fill="var(--accent-teal)" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
-    </GlassPanel>
+    </Panel>
   )
 }
 
 export function MonthlyTrendChart() {
   return (
-    <GlassPanel className="p-5 !bg-bg-surface border-border-default shadow-md rounded-xl">
+    <Panel className="p-5 shadow-md rounded-xl">
       <h3 className="text-base font-bold text-text-primary mb-4">Monthly Detection Trend</h3>
       <ResponsiveContainer width="100%" height={200}>
         <LineChart data={monthlyTrendData}>
@@ -141,7 +141,7 @@ export function MonthlyTrendChart() {
           <Line type="monotone" dataKey="area" stroke="var(--accent-teal)" strokeWidth={2} dot={{ fill: 'var(--accent-teal)', r: 3 }} name="Area (m²)" />
         </LineChart>
       </ResponsiveContainer>
-    </GlassPanel>
+    </Panel>
   )
 }
 
@@ -158,7 +158,7 @@ export function InsightCards() {
   return (
     <div className="grid grid-cols-3 gap-3">
       {cards.map((card, i) => (
-        <GlassPanel key={i} className="p-4 hover:scale-[1.02] transition-transform cursor-default !bg-bg-surface border-border-default shadow-sm">
+        <Panel key={i} className="p-4 hover:scale-[1.02] transition-transform cursor-default shadow-sm">
           <div className="flex items-center gap-2 mb-2">
             <span>{card.icon}</span>
             <span className="text-[10px] text-text-muted uppercase tracking-wider font-semibold">{card.label}</span>
@@ -166,7 +166,7 @@ export function InsightCards() {
           <div className={`text-2xl font-bold ${card.color}`}>
             <CountUpNumber value={card.value} suffix={card.suffix || ''} decimals={card.decimals || 0} />
           </div>
-        </GlassPanel>
+        </Panel>
       ))}
     </div>
   )

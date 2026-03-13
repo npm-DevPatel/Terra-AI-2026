@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
-import GlassPanel from '../shared/GlassPanel'
+import Panel from '../shared/Panel'
 
 const years = [2020, 2021, 2022, 2023, 2024, 2025, 2026]
 
@@ -60,7 +60,7 @@ export default function SatelliteTimeline({ onYearChange, selectedYear: controll
   const delta = currentCount - prevCount
 
   return (
-    <GlassPanel className="absolute bottom-4 left-4 right-4 z-10 px-6 py-4 border-border-default/80 shadow-2xl">
+    <Panel className="absolute bottom-4 left-4 right-4 z-10 px-6 py-4 shadow-2xl">
       <div className="flex items-center gap-6">
         {/* Play/Pause Button */}
         <button
@@ -141,6 +141,6 @@ export default function SatelliteTimeline({ onYearChange, selectedYear: controll
           </div>
         </div>
       </div>
-    </GlassPanel>
+    </Panel>
   )
 }

@@ -1,4 +1,4 @@
-import GlassPanel from '../shared/GlassPanel'
+import Panel from '../shared/Panel'
 import StatusBadge from '../shared/StatusBadge'
 import { getRiskColor } from '../../utils/formatters'
 
@@ -11,7 +11,7 @@ export default function SiteRiskReportCard({ data }) {
   const dashOffset = circumference - (riskScore / 100) * circumference
 
   return (
-    <GlassPanel className="absolute bottom-20 left-4 z-10 w-80 p-5 animate-reveal border-border-default shadow-lg">
+    <Panel className="absolute bottom-20 left-4 z-10 w-80 p-5 animate-reveal shadow-lg">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -86,6 +86,6 @@ export default function SiteRiskReportCard({ data }) {
         <span className="text-[10px] text-text-muted uppercase tracking-wider">Recommendation</span>
         <p className="text-xs text-accent-teal mt-1 leading-relaxed">{data.recommendation}</p>
       </div>
-    </GlassPanel>
+    </Panel>
   )
 }

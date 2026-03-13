@@ -1,4 +1,4 @@
-import GlassPanel from '../shared/GlassPanel'
+import Panel from '../shared/Panel'
 import StatusBadge from '../shared/StatusBadge'
 import alertsData from '../../data/alerts.json'
 import { formatTimestamp } from '../../utils/formatters'
@@ -20,7 +20,7 @@ const severityIcon = {
 export default function AlertFeed() {
   return (
     <div className="absolute top-4 right-4 z-10 w-80 max-h-[calc(100%-100px)] overflow-hidden flex flex-col animate-fade-up">
-      <GlassPanel className="h-full flex flex-col overflow-hidden">
+      <Panel className="h-full flex flex-col overflow-hidden">
         {/* Header */}
         <div className="px-5 py-4 border-b border-border-default/80 flex items-center justify-between bg-bg-surface/50">
           <div className="flex items-center gap-2.5">
@@ -60,7 +60,7 @@ export default function AlertFeed() {
             </div>
           ))}
         </div>
-      </GlassPanel>
+      </Panel>
     </div>
   )
 }

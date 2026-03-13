@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import GlassPanel from '../shared/GlassPanel'
+import Panel from '../shared/Panel'
 
 const layers = [
   { id: 'rivers', label: 'River Network', color: '#0891B2', defaultOn: true, icon: '🌊' },
@@ -21,7 +21,7 @@ export default function LayerControls({ onLayerToggle }) {
   }
 
   return (
-    <GlassPanel className="absolute top-4 right-14 z-10 p-4 w-60 shadow-xl border-border-default/80">
+    <Panel className="absolute top-4 right-14 z-10 p-4 w-60 shadow-xl">
       <div className="flex items-center gap-2.5 mb-4 px-1">
         <div className="w-5 h-5 rounded-lg bg-accent-teal-light border border-accent-teal/30 flex items-center justify-center">
           <svg className="w-3 h-3 text-accent-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -77,6 +77,6 @@ export default function LayerControls({ onLayerToggle }) {
           ))}
         </div>
       </div>
-    </GlassPanel>
+    </Panel>
   )
 }

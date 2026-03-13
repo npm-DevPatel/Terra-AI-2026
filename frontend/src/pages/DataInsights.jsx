@@ -1,12 +1,12 @@
 import { EncroachmentTimelineChart, RiskDistributionChart, RiverCorridorChart, MonthlyTrendChart, InsightCards } from '../components/insights/Charts'
-import GlassPanel from '../components/shared/GlassPanel'
+import Panel from '../components/shared/Panel'
 import CountUpNumber from '../components/shared/CountUpNumber'
 
 export default function DataInsights() {
   return (
     <div className="h-full overflow-y-auto p-4 space-y-4 bg-bg-base">
       {/* Header Banner */}
-      <GlassPanel className="px-6 py-4 !bg-bg-surface border border-border-default shadow-md rounded-xl">
+      <Panel className="px-6 py-4 shadow-md rounded-xl">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-text-primary">Encroachment Analytics</h2>
@@ -28,7 +28,7 @@ export default function DataInsights() {
             </div>
           </div>
         </div>
-      </GlassPanel>
+      </Panel>
 
       {/* Charts Grid */}
       <div className="grid grid-cols-2 gap-4">

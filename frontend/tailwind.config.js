@@ -12,13 +12,13 @@ export default {
         'bg-elevated': '#EEF4F2',
         'bg-sunken': '#E8F0ED',
         
-        'border-default': '#C8DAD3',
-        'border-strong': '#9DBFB4',
+        'border-default': '#B0CEC4',
+        'border-strong': '#8AB5A8',
         
         'text-primary': '#0F2420',
         'text-secondary': '#2D4A44',
-        'text-muted': '#5C7C74',
-        'text-ghost': '#8AADA6',
+        'text-muted': '#4A6B63',
+        'text-ghost': '#6B9A92',
         
         'accent-teal': '#0D9488',
         'accent-teal-light': '#CCFBF1',
@@ -47,6 +47,9 @@ export default {
         'pulse-ring': 'pulseRing 2.5s ease-in-out infinite',
         'shimmer': 'shimmer 1.5s linear infinite',
         'breathe': 'breathe 2s ease-in-out infinite',
+        'slide-in-right': 'slideInRight 0.3s ease-out',
+        'fade-in': 'fadeIn 0.2s ease-out',
+        'reveal': 'reveal 0.3s ease-out',
       },
       keyframes: {
         fadeUp: {

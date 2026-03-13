@@ -1,18 +1,18 @@
 import { useState, useRef, useEffect } from 'react'
-import StatusBadge from '../shared/StatusBadge'
 import { formatCoordinate } from '../../utils/formatters'
 import { sendChatMessage } from '../../services/apiService'
 import microphoneIcon from '../../assets/microphone.png'
 import voiceLineGif from '../../assets/voice_line.gif'
 import pulsingVideo from '../../assets/pulsing/pulsing.mp4'
-import response1Caption from '../../assets/response_audios/text/response_1.1_captions.txt?raw'
+import response1Caption from '../../assets/response_audios/text/response_1_captions.txt?raw'
 import response2Caption from '../../assets/response_audios/text/response_2_captions.txt?raw'
+import response3Caption from '../../assets/response_audios/text/response_3_captions.txt?raw'
 
 export default function AIChatPanel({ siteRisk, loading, onQuery }) {
   const [messages, setMessages] = useState([
     {
       type: 'ai',
-      text: 'Welcome to Terra AI Risk Analyst. Drop a pin on the map or use the microphone to assess any site in Nairobi.',
+      text: 'Welcome to Terra AI Site Analyst. Drop a pin on the map or use the microphone to assess any site in Nairobi.',
     },
   ])
   const [input, setInput] = useState('')
@@ -22,7 +22,7 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
   // Voice interaction state
   const [isRecording, setIsRecording] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [conversationStage, setConversationStage] = useState(0) // 0=initial, 1=waiting for 2nd query, 2=done
+  const [conversationStage, setConversationStage] = useState(0) // 0=initial, 1=waiting for 2nd, 2=waiting for 3rd, 3=done
   const [currentCaption, setCurrentCaption] = useState('')
   const [showPulsing, setShowPulsing] = useState(false)
   const [currentWordIndex, setCurrentWordIndex] = useState(-1)
@@ -32,24 +32,11 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
   const audioContextRef = useRef(null)
   const currentAudioRef = useRef(null)
   const captionTimerRef = useRef(null)
+  const captionUpdateIntervalRef = useRef(null)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, currentCaption])
-
-  useEffect(() => {
-    if (siteRisk && !loading) {
-      const coord = formatCoordinate(siteRisk.site.lat, siteRisk.site.lng)
-      setMessages(prev => [
-        ...prev,
-        {
-          type: 'ai',
-          text: siteRisk.ai_narrative,
-          report: siteRisk,
-        },
-      ])
-    }
-  }, [siteRisk, loading])
 
   useEffect(() => {
     if (loading) {
@@ -61,7 +48,7 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
   }, [loading])
 
   const handleMicrophoneClick = async () => {
-    if (conversationStage === 2) {
+    if (conversationStage === 3) {
       // Conversation already complete
       return
     }
@@ -73,7 +60,8 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
 
       // Play the appropriate response after a brief pause
       setTimeout(() => {
-        playAIResponse(conversationStage === 0 ? 1 : 2)
+        const responseNumber = conversationStage + 1
+        playAIResponse(responseNumber)
       }, 500)
     } else {
       // Start recording
@@ -103,13 +91,22 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
 
   const playAIResponse = async (responseNumber) => {
     const audioPath = responseNumber === 1 
-      ? new URL('../../assets/response_audios/response_1.1.mp3', import.meta.url).href
-      : new URL('../../assets/response_audios/response_2.mp3', import.meta.url).href
+      ? new URL('../../assets/response_audios/voices/response_1.mp3', import.meta.url).href
+      : responseNumber === 2
+      ? new URL('../../assets/response_audios/voices/response_2.mp3', import.meta.url).href
+      : new URL('../../assets/response_audios/voices/response_3.mp3', import.meta.url).href
 
-    const captionText = responseNumber === 1 ? response1Caption : response2Caption
-    const captionWords = captionText.trim().split(/\s+/)
+    // Get caption text - files are now clean
+    let captionText = responseNumber === 1 
+      ? response1Caption 
+      : responseNumber === 2 
+      ? response2Caption 
+      : response3Caption
+    captionText = captionText.trim()
+    
+    const captionWords = captionText.split(/\s+/).filter(word => word.length > 0)
     setWords(captionWords)
-    setCurrentCaption(captionText.trim())
+    setCurrentCaption(captionText)
     setShowPulsing(true)
     setIsPlaying(true)
     setCurrentWordIndex(0)
@@ -120,7 +117,7 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
 
       // Sync word-by-word based on audio progress
       const captionUpdateInterval = setInterval(() => {
-        if (audio.paused && audio.currentTime === 0) {
+        if (audio.paused) {
           clearInterval(captionUpdateInterval)
           return
         }
@@ -131,8 +128,11 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
         setCurrentWordIndex(Math.min(wordIndex, captionWords.length - 1))
       }, 50)
 
+      captionUpdateIntervalRef.current = captionUpdateInterval
+
       audio.onended = () => {
         clearInterval(captionUpdateInterval)
+        captionUpdateIntervalRef.current = null
         setCurrentCaption('')
         setCurrentWordIndex(-1)
         setWords([])
@@ -144,14 +144,17 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
           ...prev,
           {
             type: 'ai',
-            text: captionText.trim(),
+            text: captionText,
           },
         ])
 
+        // Update conversation stage
         if (responseNumber === 1) {
-          setConversationStage(1) // Ready for second query
+          setConversationStage(1) // Ready for second response
+        } else if (responseNumber === 2) {
+          setConversationStage(2) // Ready for third response
         } else {
-          setConversationStage(2) // Conversation complete
+          setConversationStage(3) // Conversation complete
         }
       }
 
@@ -162,6 +165,41 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
       setShowPulsing(false)
       setCurrentWordIndex(-1)
       setWords([])
+      if (captionUpdateIntervalRef.current) {
+        clearInterval(captionUpdateIntervalRef.current)
+        captionUpdateIntervalRef.current = null
+      }
+    }
+  }
+
+  const stopAIResponse = () => {
+    // Stop the audio
+    if (currentAudioRef.current) {
+      currentAudioRef.current.pause()
+      currentAudioRef.current.currentTime = 0
+      currentAudioRef.current = null
+    }
+
+    // Clear interval
+    if (captionUpdateIntervalRef.current) {
+      clearInterval(captionUpdateIntervalRef.current)
+      captionUpdateIntervalRef.current = null
+    }
+
+    // Reset state
+    setCurrentCaption('')
+    setCurrentWordIndex(-1)
+    setWords([])
+    setShowPulsing(false)
+    setIsPlaying(false)
+
+    // Move to next response if available
+    if (conversationStage === 0) {
+      setConversationStage(1) // Ready for second response
+    } else if (conversationStage === 1) {
+      setConversationStage(2) // Ready for third response
+    } else if (conversationStage === 2) {
+      setConversationStage(3) // Conversation complete
     }
   }
 
@@ -213,41 +251,7 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
   }
 
   return (
-    <>
-      {/* Center Pulsing Overlay */}
-      {showPulsing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
-          <div className="absolute inset-0 opacity-40">
-            <video autoPlay loop muted className="w-full h-full object-cover">
-              <source src={pulsingVideo} type="video/mp4" />
-            </video>
-          </div>
-
-          {/* Large Captions with Highlighted Current Word */}
-          {currentCaption && (
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-4xl px-8 text-center z-10">
-              <p className="text-4xl leading-relaxed font-light text-text-muted/70">
-                {words.map((word, idx) => (
-                  <span
-                    key={idx}
-                    className={`inline transition-all duration-75 ${
-                      idx === currentWordIndex
-                        ? 'text-accent-teal font-semibold scale-110'
-                        : 'text-text-muted/60'
-                    }`}
-                  >
-                    {word}{' '}
-                  </span>
-                ))}
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Chat Panel Card */}
-      <div className="absolute top-4 right-4 z-10 w-96 h-[calc(100%-80px)] flex flex-col bg-bg-surface/95 backdrop-blur-md text-text-secondary shadow-xl rounded-2xl border border-border-default/80 ring-1 ring-black/5 animate-slide-in-right overflow-hidden">
-
+    <div className="absolute top-4 right-4 z-10 w-96 h-[calc(100%-80px)] flex flex-col bg-bg-surface/95 backdrop-blur-md text-text-secondary shadow-xl rounded-2xl border border-border-default/80 ring-1 ring-black/5 animate-slide-in-right overflow-hidden">
       {/* Header */}
       <div className="px-5 py-4 border-b border-border-default bg-bg-surface/90 relative z-10">
         <div className="flex items-center gap-3">
@@ -260,6 +264,15 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
           </div>
         </div>
       </div>
+
+      {/* Pulsing Video Background (inside chat panel when playing) */}
+      {showPulsing && (
+        <div className="absolute inset-0 z-0 opacity-30 overflow-hidden rounded-2xl">
+          <video autoPlay loop muted className="w-full h-full object-cover">
+            <source src={pulsingVideo} type="video/mp4" />
+          </video>
+        </div>
+      )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-transparent relative z-10">
@@ -275,28 +288,15 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
               <p className="text-[13px] leading-relaxed font-medium">{msg.text}</p>
               {msg.report && (
                 <div className="mt-3 p-3 rounded-lg bg-bg-surface border border-border-default space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-text-muted uppercase tracking-wider">Suitability Assessment</span>
-                    <StatusBadge level={msg.report.risk_level} />
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-[11px]">
-                    <div>
-                      <span className="text-text-muted">Distance</span>
-                      <div className="text-text-primary font-mono font-semibold">{msg.report.distance_from_river_m}m</div>
-                    </div>
-                    <div>
-                      <span className="text-text-muted">River</span>
-                      <div className="text-text-primary font-medium">{msg.report.nearest_river}</div>
-                    </div>
-                    <div>
-                      <span className="text-text-muted">Buffer</span>
-                      <div className={`font-semibold ${msg.report.inside_buffer ? 'text-risk-high' : 'text-accent-green'}`}>
-                        {msg.report.inside_buffer ? 'Inside' : 'Outside'}
-                      </div>
-                    </div>
+                  <span className="text-[10px] text-text-muted uppercase tracking-wider">Suitability Assessment</span>
+                  <div className="text-[11px] space-y-1.5">
                     <div>
                       <span className="text-text-muted">Flood Zone</span>
-                      <div className="text-text-primary text-[10px] font-medium">{msg.report.flood_zone}</div>
+                      <div className="text-text-primary">{msg.report.flood_zone}</div>
+                    </div>
+                    <div>
+                      <span className="text-text-muted">Land Classification</span>
+                      <div className="text-text-primary">{msg.report.land_classification}</div>
                     </div>
                   </div>
                   <div className="pt-2 border-t border-border-default">
@@ -311,6 +311,26 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Live Captions - Above Input */}
+      {showPulsing && currentCaption && (
+        <div className="px-5 py-3 border-t border-border-default bg-bg-surface/60 relative z-10">
+          <p className="text-[12px] leading-relaxed font-medium text-text-secondary">
+            {words.map((word, idx) => (
+              <span
+                key={idx}
+                className={`inline transition-all duration-75 ${
+                  idx === currentWordIndex
+                    ? 'text-accent-teal font-semibold scale-110'
+                    : 'text-text-muted/60'
+                }`}
+              >
+                {word}{' '}
+              </span>
+            ))}
+          </p>
+        </div>
+      )}
+
       {/* Input */}
       <form onSubmit={handleSubmit} className="p-4 border-t border-border-default/80 bg-bg-surface/60 backdrop-blur-sm relative z-10">
         <div className="flex items-center gap-3">
@@ -319,7 +339,7 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={isRecording ? 'Listening...' : 'Is this site safe to build on?'}
+              placeholder={isRecording ? 'Listening...' : isPlaying ? 'AI Speaking...' : 'Is this site suitable?'}
               className="w-full bg-bg-surface/80 border border-border-strong/50 rounded-xl px-4 py-3 text-[13px] text-text-primary placeholder-text-ghost focus:outline-none focus:ring-2 focus:ring-accent-teal/20 focus:border-accent-teal transition-all shadow-sm"
               id="ai-chat-input"
               disabled={chatLoading || isRecording || isPlaying}
@@ -328,10 +348,27 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
               <img src={voiceLineGif} alt="Listening" className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5" />
             )}
           </div>
+
+          {/* Stop Button (appears when AI is playing) */}
+          {isPlaying && (
+            <button
+              type="button"
+              onClick={stopAIResponse}
+              className="flex items-center justify-center w-9 h-9 rounded-lg border border-risk-high bg-risk-high/20 hover:bg-risk-high/30 transition-all shadow-sm"
+              aria-label="Stop AI"
+              title="Stop AI response"
+            >
+              <svg className="w-4 h-4 text-risk-high" fill="currentColor" viewBox="0 0 24 24">
+                <rect x="6" y="6" width="12" height="12" />
+              </svg>
+            </button>
+          )}
+
+          {/* Microphone Button */}
           <button
             type="button"
             onClick={handleMicrophoneClick}
-            disabled={isPlaying || conversationStage === 2}
+            disabled={isPlaying || conversationStage === 3}
             className={`flex items-center justify-center w-9 h-9 rounded-lg border transition-all ${
               isRecording
                 ? 'border-accent-teal bg-accent-teal/20 shadow-lg'
@@ -342,6 +379,7 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
             <img src={microphoneIcon} alt="Microphone" className={`w-4 h-4 ${isRecording ? 'animate-pulse' : ''}`} />
           </button>
 
+          {/* Send Button */}
           <button
             type="submit"
             disabled={chatLoading || isRecording || isPlaying}
@@ -353,8 +391,7 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
           </button>
         </div>
       </form>
-      </div>
-    </>
+    </div>
   )
 }
 

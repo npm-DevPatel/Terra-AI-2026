@@ -1,67 +1,17 @@
 import Panel from '../shared/Panel'
-import StatusBadge from '../shared/StatusBadge'
-import { getRiskColor } from '../../utils/formatters'
 
 export default function SiteRiskReportCard({ data }) {
   if (!data) return null
-
-  const riskColor = getRiskColor(data.risk_level)
-  const riskScore = data.risk_score || 0
-  const circumference = 2 * Math.PI * 40
-  const dashOffset = circumference - (riskScore / 100) * circumference
 
   return (
     <Panel className="absolute bottom-20 left-4 z-10 w-80 p-5 animate-reveal shadow-lg">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider">Site Risk Report</h3>
+          <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider">Site Suitability Report</h3>
           <p className="text-[10px] font-mono font-medium text-text-secondary mt-0.5">
             {data.site.lat.toFixed(4)}, {data.site.lng.toFixed(4)}
           </p>
-        </div>
-        <StatusBadge level={data.risk_level} />
-      </div>
-
-      {/* Risk Gauge */}
-      <div className="flex items-center gap-6 mb-4">
-        <div className="relative w-24 h-24 flex-shrink-0">
-          <svg className="risk-gauge w-full h-full -rotate-90" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="var(--bg-sunken)" strokeWidth="8" />
-            <circle
-              cx="50"
-              cy="50"
-              r="40"
-              fill="none"
-              stroke={riskColor}
-              strokeWidth="8"
-              strokeLinecap="round"
-              strokeDasharray={circumference}
-              strokeDashoffset={dashOffset}
-              style={{ filter: `drop-shadow(0 0 6px ${riskColor}80)` }}
-            />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-xl font-bold font-mono" style={{ color: riskColor }}>{riskScore}</span>
-            <span className="text-[9px] text-text-muted uppercase">Risk Score</span>
-          </div>
-        </div>
-
-        <div className="space-y-2.5 flex-1">
-          <div>
-            <span className="text-[10px] text-text-muted uppercase">Distance to River</span>
-            <div className="text-sm font-mono font-semibold text-text-primary">{data.distance_from_river_m}m</div>
-          </div>
-          <div>
-            <span className="text-[10px] text-text-muted uppercase">Nearest River</span>
-            <div className="text-sm text-text-primary">{data.nearest_river}</div>
-          </div>
-          <div>
-            <span className="text-[10px] text-text-muted uppercase">Buffer Status</span>
-            <div className={`text-sm font-semibold ${data.inside_buffer ? 'text-risk-high' : 'text-accent-green'}`}>
-              {data.inside_buffer ? '⚠️ Inside Buffer' : '✅ Outside Buffer'}
-            </div>
-          </div>
         </div>
       </div>
 

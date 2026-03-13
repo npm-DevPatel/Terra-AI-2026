@@ -25,6 +25,8 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
   const [conversationStage, setConversationStage] = useState(0) // 0=initial, 1=waiting for 2nd query, 2=done
   const [currentCaption, setCurrentCaption] = useState('')
   const [showPulsing, setShowPulsing] = useState(false)
+  const [currentWordIndex, setCurrentWordIndex] = useState(-1)
+  const [words, setWords] = useState([])
 
   const mediaRecorderRef = useRef(null)
   const audioContextRef = useRef(null)
@@ -105,31 +107,35 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
       : new URL('../../assets/response_audios/response_2.mp3', import.meta.url).href
 
     const captionText = responseNumber === 1 ? response1Caption : response2Caption
-
+    const captionWords = captionText.trim().split(/\s+/)
+    setWords(captionWords)
+    setCurrentCaption(captionText.trim())
     setShowPulsing(true)
     setIsPlaying(true)
+    setCurrentWordIndex(0)
 
     try {
       const audio = new Audio(audioPath)
       currentAudioRef.current = audio
 
-      // Sync captions with audio
-      let captionCharIndex = 0
+      // Sync word-by-word based on audio progress
       const captionUpdateInterval = setInterval(() => {
         if (audio.paused && audio.currentTime === 0) {
           clearInterval(captionUpdateInterval)
           return
         }
 
-        // Gradually reveal caption text based on audio progress
+        // Calculate which word should be highlighted based on time progress
         const progress = audio.duration > 0 ? audio.currentTime / audio.duration : 0
-        const maxChars = Math.floor(captionText.length * progress)
-        setCurrentCaption(captionText.substring(0, maxChars))
-      }, 100)
+        const wordIndex = Math.floor(progress * captionWords.length)
+        setCurrentWordIndex(Math.min(wordIndex, captionWords.length - 1))
+      }, 50)
 
       audio.onended = () => {
         clearInterval(captionUpdateInterval)
         setCurrentCaption('')
+        setCurrentWordIndex(-1)
+        setWords([])
         setShowPulsing(false)
         setIsPlaying(false)
         
@@ -154,6 +160,8 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
       console.error('Error playing audio:', error)
       setIsPlaying(false)
       setShowPulsing(false)
+      setCurrentWordIndex(-1)
+      setWords([])
     }
   }
 
@@ -205,15 +213,40 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
   }
 
   return (
-    <div className="absolute top-4 right-4 z-10 w-96 h-[calc(100%-80px)] flex flex-col bg-bg-surface/95 backdrop-blur-md text-text-secondary shadow-xl rounded-2xl border border-border-default/80 ring-1 ring-black/5 animate-slide-in-right overflow-hidden">
-      {/* Pulsing Animation Background */}
+    <>
+      {/* Center Pulsing Overlay */}
       {showPulsing && (
-        <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
-          <video autoPlay loop muted className="w-full h-full object-cover">
-            <source src={pulsingVideo} type="video/mp4" />
-          </video>
+        <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+          <div className="absolute inset-0 opacity-40">
+            <video autoPlay loop muted className="w-full h-full object-cover">
+              <source src={pulsingVideo} type="video/mp4" />
+            </video>
+          </div>
+
+          {/* Large Captions with Highlighted Current Word */}
+          {currentCaption && (
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-4xl px-8 text-center z-10">
+              <p className="text-4xl leading-relaxed font-light text-text-muted/70">
+                {words.map((word, idx) => (
+                  <span
+                    key={idx}
+                    className={`inline transition-all duration-75 ${
+                      idx === currentWordIndex
+                        ? 'text-accent-teal font-semibold scale-110'
+                        : 'text-text-muted/60'
+                    }`}
+                  >
+                    {word}{' '}
+                  </span>
+                ))}
+              </p>
+            </div>
+          )}
         </div>
       )}
+
+      {/* Chat Panel Card */}
+      <div className="absolute top-4 right-4 z-10 w-96 h-[calc(100%-80px)] flex flex-col bg-bg-surface/95 backdrop-blur-md text-text-secondary shadow-xl rounded-2xl border border-border-default/80 ring-1 ring-black/5 animate-slide-in-right overflow-hidden">
 
       {/* Header */}
       <div className="px-5 py-4 border-b border-border-default bg-bg-surface/90 relative z-10">
@@ -227,15 +260,6 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
           </div>
         </div>
       </div>
-
-      {/* Caption Display - Apple Style */}
-      {currentCaption && (
-        <div className="px-5 py-3 bg-gradient-to-b from-accent-teal/10 to-transparent border-b border-accent-teal/20 relative z-10">
-          <p className="text-center text-[13px] leading-relaxed text-text-primary font-medium animate-fade-in">
-            {currentCaption}
-          </p>
-        </div>
-      )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-transparent relative z-10">
@@ -329,7 +353,8 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
           </button>
         </div>
       </form>
-    </div>
+      </div>
+    </>
   )
 }
 

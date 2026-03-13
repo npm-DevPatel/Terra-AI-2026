@@ -2,19 +2,22 @@ import { useState } from 'react'
 import GlassPanel from '../shared/GlassPanel'
 
 const layers = [
-  { id: 'rivers', label: 'River Network', color: '#00E5FF', defaultOn: true },
-  { id: 'buffers', label: 'Riparian Buffer (30m)', color: '#14B8A6', defaultOn: true },
-  { id: 'encroachments', label: 'Encroachments', color: '#EF4444', defaultOn: true },
+  { id: 'rivers', label: 'River Network', color: '#00E5FF', defaultOn: true, icon: '🌊' },
+  { id: 'buffers', label: 'Riparian Buffer (30m)', color: '#14B8A6', defaultOn: true, icon: '🟢' },
+  { id: 'encroachments', label: 'Encroachments', color: '#EF4444', defaultOn: true, icon: '⚠️' },
+  { id: 'floodZones', label: 'Flood Zones', color: '#1E40AF', defaultOn: true, icon: '🌧' },
+  { id: 'riskZones', label: 'Risk Heatmap', color: '#DC2626', defaultOn: true, icon: '🔥' },
 ]
 
-export default function LayerControls() {
+export default function LayerControls({ onLayerToggle }) {
   const [visible, setVisible] = useState(
     layers.reduce((acc, l) => ({ ...acc, [l.id]: l.defaultOn }), {})
   )
 
   const toggleLayer = (layerId) => {
-    setVisible(prev => ({ ...prev, [layerId]: !prev[layerId] }))
-    // In a full implementation, this would toggle Mapbox layers
+    const newVisibility = { ...visible, [layerId]: !visible[layerId] }
+    setVisible(newVisibility)
+    onLayerToggle?.(newVisibility)
   }
 
   return (
@@ -25,26 +28,47 @@ export default function LayerControls() {
         </svg>
         <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Layers</span>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         {layers.map(layer => (
           <button
             key={layer.id}
             onClick={() => toggleLayer(layer.id)}
             className={`flex items-center gap-3 w-full px-2 py-1.5 rounded-md text-left transition-all duration-200 ${
-              visible[layer.id] ? 'bg-terra-elevated/50' : 'opacity-50'
+              visible[layer.id] ? 'bg-terra-elevated/50' : 'opacity-40'
             }`}
           >
             <div
-              className="w-3 h-3 rounded-sm border"
+              className="w-3 h-3 rounded-sm border flex-shrink-0 transition-all duration-200"
               style={{
                 backgroundColor: visible[layer.id] ? layer.color : 'transparent',
                 borderColor: layer.color,
                 boxShadow: visible[layer.id] ? `0 0 6px ${layer.color}40` : 'none',
               }}
             />
-            <span className="text-xs text-slate-300">{layer.label}</span>
+            <span className="text-[10px] text-slate-400">{layer.icon}</span>
+            <span className={`text-xs transition-colors ${visible[layer.id] ? 'text-slate-300' : 'text-slate-600'}`}>
+              {layer.label}
+            </span>
           </button>
         ))}
+      </div>
+
+      {/* Legend */}
+      <div className="mt-3 pt-3 border-t border-terra-border/20">
+        <div className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Flood Depth Legend</div>
+        <div className="space-y-1">
+          {[
+            { color: '#22D3EE', label: "5' or Less" },
+            { color: '#1E40AF', label: "5' - 10'" },
+            { color: '#0000CD', label: "10' - 15'" },
+            { color: '#DC2626', label: "15' - 20'" },
+          ].map(item => (
+            <div key={item.label} className="flex items-center gap-2">
+              <div className="w-4 h-2.5 rounded-sm" style={{ backgroundColor: item.color, opacity: 0.7 }} />
+              <span className="text-[10px] text-slate-500">{item.label}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </GlassPanel>
   )

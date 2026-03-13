@@ -3,21 +3,37 @@ import StatusBadge from '../shared/StatusBadge'
 import { formatCoordinate } from '../../utils/formatters'
 import { sendChatMessage } from '../../services/apiService'
 import microphoneIcon from '../../assets/microphone.png'
+import voiceLineGif from '../../assets/voice_line.gif'
+import pulsingVideo from '../../assets/pulsing/pulsing.mp4'
+import response1Caption from '../../assets/response_audios/text/response_1.1_captions.txt?raw'
+import response2Caption from '../../assets/response_audios/text/response_2_captions.txt?raw'
 
 export default function AIChatPanel({ siteRisk, loading, onQuery }) {
   const [messages, setMessages] = useState([
     {
       type: 'ai',
-      text: 'Welcome to Terra AI Risk Analyst. Drop a pin on the map or type a question to assess any site in Nairobi.',
+      text: 'Welcome to Terra AI Risk Analyst. Drop a pin on the map or use the microphone to assess any site in Nairobi.',
     },
   ])
   const [input, setInput] = useState('')
   const [chatLoading, setChatLoading] = useState(false)
   const messagesEndRef = useRef(null)
 
+  // Voice interaction state
+  const [isRecording, setIsRecording] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [conversationStage, setConversationStage] = useState(0) // 0=initial, 1=waiting for 2nd query, 2=done
+  const [currentCaption, setCurrentCaption] = useState('')
+  const [showPulsing, setShowPulsing] = useState(false)
+
+  const mediaRecorderRef = useRef(null)
+  const audioContextRef = useRef(null)
+  const currentAudioRef = useRef(null)
+  const captionTimerRef = useRef(null)
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  }, [messages, currentCaption])
 
   useEffect(() => {
     if (siteRisk && !loading) {
@@ -42,28 +58,124 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
     }
   }, [loading])
 
+  const handleMicrophoneClick = async () => {
+    if (conversationStage === 2) {
+      // Conversation already complete
+      return
+    }
+
+    if (isRecording) {
+      // Stop recording
+      setIsRecording(false)
+      mediaRecorderRef.current?.stop()
+
+      // Play the appropriate response after a brief pause
+      setTimeout(() => {
+        playAIResponse(conversationStage === 0 ? 1 : 2)
+      }, 500)
+    } else {
+      // Start recording
+      setCurrentCaption('')
+      setIsRecording(true)
+      startRecording()
+    }
+  }
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mediaRecorder = new MediaRecorder(stream)
+      mediaRecorderRef.current = mediaRecorder
+
+      // We don't need to send audio anywhere since it's scripted
+      mediaRecorder.ondataavailable = () => {
+        // Discard recorded data - all responses are pre-recorded
+      }
+
+      mediaRecorder.start()
+    } catch (error) {
+      console.error('Microphone access denied:', error)
+      setIsRecording(false)
+    }
+  }
+
+  const playAIResponse = async (responseNumber) => {
+    const audioPath = responseNumber === 1 
+      ? new URL('../../assets/response_audios/response_1.1.mp3', import.meta.url).href
+      : new URL('../../assets/response_audios/response_2.mp3', import.meta.url).href
+
+    const captionText = responseNumber === 1 ? response1Caption : response2Caption
+
+    setShowPulsing(true)
+    setIsPlaying(true)
+
+    try {
+      const audio = new Audio(audioPath)
+      currentAudioRef.current = audio
+
+      // Sync captions with audio
+      let captionCharIndex = 0
+      const captionUpdateInterval = setInterval(() => {
+        if (audio.paused && audio.currentTime === 0) {
+          clearInterval(captionUpdateInterval)
+          return
+        }
+
+        // Gradually reveal caption text based on audio progress
+        const progress = audio.duration > 0 ? audio.currentTime / audio.duration : 0
+        const maxChars = Math.floor(captionText.length * progress)
+        setCurrentCaption(captionText.substring(0, maxChars))
+      }, 100)
+
+      audio.onended = () => {
+        clearInterval(captionUpdateInterval)
+        setCurrentCaption('')
+        setShowPulsing(false)
+        setIsPlaying(false)
+        
+        // Add AI message to chat
+        setMessages(prev => [
+          ...prev,
+          {
+            type: 'ai',
+            text: captionText.trim(),
+          },
+        ])
+
+        if (responseNumber === 1) {
+          setConversationStage(1) // Ready for second query
+        } else {
+          setConversationStage(2) // Conversation complete
+        }
+      }
+
+      audio.play()
+    } catch (error) {
+      console.error('Error playing audio:', error)
+      setIsPlaying(false)
+      setShowPulsing(false)
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!input.trim() || chatLoading) return
+    if (!input.trim() || chatLoading || isRecording || isPlaying) return
 
     const userMessage = input.trim()
     setMessages(prev => [...prev, { type: 'user', text: userMessage }])
     setInput('')
     setChatLoading(true)
 
-    // Show thinking indicator
     setMessages(prev => [
       ...prev,
       { type: 'ai', text: '🤖 Thinking...', loading: true },
     ])
 
     try {
-      // Call the backend AI chat endpoint
       const lat = siteRisk?.site?.lat || null
       const lng = siteRisk?.site?.lng || null
       const data = await sendChatMessage(userMessage, lat, lng)
 
-      // Remove thinking indicator and add real response
       setMessages(prev => {
         const filtered = prev.filter(m => !m.loading || m.text !== '🤖 Thinking...')
         return [
@@ -77,7 +189,6 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
       })
     } catch (error) {
       console.warn('[Terra AI] Chat API failed, using local fallback:', error.message)
-      // Fallback to local responses
       setMessages(prev => {
         const filtered = prev.filter(m => !m.loading || m.text !== '🤖 Thinking...')
         return [
@@ -94,22 +205,40 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
   }
 
   return (
-    <div className="absolute top-4 right-4 z-10 w-96 h-[calc(100%-80px)] flex flex-col bg-white text-text-secondary shadow-xl rounded-2xl border border-border-default animate-slide-in-right overflow-hidden">
+    <div className="absolute top-4 right-4 z-10 w-96 h-[calc(100%-80px)] flex flex-col bg-bg-surface/95 backdrop-blur-md text-text-secondary shadow-xl rounded-2xl border border-border-default/80 ring-1 ring-black/5 animate-slide-in-right overflow-hidden">
+      {/* Pulsing Animation Background */}
+      {showPulsing && (
+        <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
+          <video autoPlay loop muted className="w-full h-full object-cover">
+            <source src={pulsingVideo} type="video/mp4" />
+          </video>
+        </div>
+      )}
+
       {/* Header */}
-      <div className="px-5 py-4 border-b border-border-default bg-bg-surface/90">
+      <div className="px-5 py-4 border-b border-border-default bg-bg-surface/90 relative z-10">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-accent-teal-light border border-accent-teal/30 flex items-center justify-center shadow-sm">
             <span className="text-lg">🤖</span>
           </div>
           <div>
-            <div className="text-[15px] font-bold text-text-primary tracking-tight">AI Risk Analyst</div>
-            <div className="text-[11px] font-medium text-accent-teal">Powered by Terra AI</div>
+            <div className="text-[15px] font-bold text-text-primary tracking-tight">AI Suitability Analyst</div>
+            <div className="text-[11px] font-medium text-accent-teal">Powered by Terra AI Land Suitability</div>
           </div>
         </div>
       </div>
 
+      {/* Caption Display - Apple Style */}
+      {currentCaption && (
+        <div className="px-5 py-3 bg-gradient-to-b from-accent-teal/10 to-transparent border-b border-accent-teal/20 relative z-10">
+          <p className="text-center text-[13px] leading-relaxed text-text-primary font-medium animate-fade-in">
+            {currentCaption}
+          </p>
+        </div>
+      )}
+
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-transparent">
+      <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-transparent relative z-10">
         {messages.map((msg, i) => (
           <div key={i} className={`flex w-full ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div
@@ -123,7 +252,7 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
               {msg.report && (
                 <div className="mt-3 p-3 rounded-lg bg-bg-surface border border-border-default space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-text-muted uppercase tracking-wider">Risk Assessment</span>
+                    <span className="text-[10px] text-text-muted uppercase tracking-wider">Suitability Assessment</span>
                     <StatusBadge level={msg.report.risk_level} />
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-[11px]">
@@ -159,27 +288,39 @@ export default function AIChatPanel({ siteRisk, loading, onQuery }) {
       </div>
 
       {/* Input */}
-      <form onSubmit={handleSubmit} className="p-4 border-t border-border-default/80 bg-bg-surface/60 backdrop-blur-sm">
+      <form onSubmit={handleSubmit} className="p-4 border-t border-border-default/80 bg-bg-surface/60 backdrop-blur-sm relative z-10">
         <div className="flex items-center gap-3">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Is this site safe to build on?"
-            className="flex-1 bg-bg-surface/80 border border-border-strong/50 rounded-xl px-4 py-3 text-[13px] text-text-primary placeholder-text-ghost focus:outline-none focus:ring-2 focus:ring-accent-teal/20 focus:border-accent-teal transition-all shadow-sm"
-            id="ai-chat-input"
-            disabled={chatLoading}
-          />
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={isRecording ? 'Listening...' : 'Is this site safe to build on?'}
+              className="w-full bg-bg-surface/80 border border-border-strong/50 rounded-xl px-4 py-3 text-[13px] text-text-primary placeholder-text-ghost focus:outline-none focus:ring-2 focus:ring-accent-teal/20 focus:border-accent-teal transition-all shadow-sm"
+              id="ai-chat-input"
+              disabled={chatLoading || isRecording || isPlaying}
+            />
+            {isRecording && (
+              <img src={voiceLineGif} alt="Listening" className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5" />
+            )}
+          </div>
           <button
             type="button"
-            className="flex items-center justify-center w-9 h-9 rounded-lg border border-border-default/80 bg-bg-surface hover:bg-bg-elevated transition-colors"
-            aria-label="Voice input (coming soon)"
+            onClick={handleMicrophoneClick}
+            disabled={isPlaying || conversationStage === 2}
+            className={`flex items-center justify-center w-9 h-9 rounded-lg border transition-all ${
+              isRecording
+                ? 'border-accent-teal bg-accent-teal/20 shadow-lg'
+                : 'border-border-default/80 bg-bg-surface hover:bg-bg-elevated'
+            }`}
+            aria-label="Voice input"
           >
-            <img src={microphoneIcon} alt="Microphone" className="w-4 h-4" />
+            <img src={microphoneIcon} alt="Microphone" className={`w-4 h-4 ${isRecording ? 'animate-pulse' : ''}`} />
           </button>
+
           <button
             type="submit"
-            disabled={chatLoading}
+            disabled={chatLoading || isRecording || isPlaying}
             className="px-4 py-3 bg-accent-teal text-white rounded-xl hover:bg-teal-600 hover:shadow-md transition-all disabled:opacity-50 flex items-center justify-center shadow-accent-teal/20 shadow-sm"
           >
             <svg className="w-5 h-5 -ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

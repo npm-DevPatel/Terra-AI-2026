@@ -1,0 +1,86 @@
+[
+  {
+    "id": "ALT-001",
+    "type": "NEW_ENCROACHMENT",
+    "severity": "HIGH",
+    "title": "New structure detected near Mathare River",
+    "description": "Residential structure 12m from centerline. Concrete foundation visible.",
+    "timestamp": "2025-03-11T14:32:00Z",
+    "location": { "lat": -1.2612, "lng": 36.8570 },
+    "river": "Mathare River",
+    "distance_m": 12,
+    "encroachment_id": "ENC-2025-001"
+  },
+  {
+    "id": "ALT-002",
+    "type": "EXPANSION_DETECTED",
+    "severity": "HIGH",
+    "title": "Structure expansion at Nairobi River site",
+    "description": "Previously flagged structure has expanded by ~80 sqm. Now 10m from river.",
+    "timestamp": "2025-03-10T09:15:00Z",
+    "location": { "lat": -1.2832, "lng": 36.8704 },
+    "river": "Nairobi River",
+    "distance_m": 10,
+    "encroachment_id": "ENC-2024-006"
+  },
+  {
+    "id": "ALT-003",
+    "type": "NEW_ENCROACHMENT",
+    "severity": "MEDIUM",
+    "title": "Kiosk cluster detected near Ngong River",
+    "description": "Commercial structures 15m from Ngong River. Impervious surface expansion.",
+    "timestamp": "2025-03-09T16:45:00Z",
+    "location": { "lat": -1.2935, "lng": 36.8178 },
+    "river": "Ngong River",
+    "distance_m": 15,
+    "encroachment_id": "ENC-2025-008"
+  },
+  {
+    "id": "ALT-004",
+    "type": "BUFFER_BREACH",
+    "severity": "HIGH",
+    "title": "Critical: Structure within 5m of Mathare River",
+    "description": "Large structure directly on historical floodplain. Immediate risk zone.",
+    "timestamp": "2025-03-08T11:20:00Z",
+    "location": { "lat": -1.2586, "lng": 36.8601 },
+    "river": "Mathare River",
+    "distance_m": 5,
+    "encroachment_id": "ENC-2025-004"
+  },
+  {
+    "id": "ALT-005",
+    "type": "NEW_ENCROACHMENT",
+    "severity": "HIGH",
+    "title": "Commercial structure near Mathare River",
+    "description": "Multiple roof segments 8m from river. Extends into floodplain.",
+    "timestamp": "2025-03-07T13:55:00Z",
+    "location": { "lat": -1.2608, "lng": 36.8543 },
+    "river": "Mathare River",
+    "distance_m": 8,
+    "encroachment_id": "ENC-2025-002"
+  },
+  {
+    "id": "ALT-006",
+    "type": "SCAN_COMPLETE",
+    "severity": "INFO",
+    "title": "Weekly scan completed — Mathare corridor",
+    "description": "Scan of 12.4km Mathare River corridor complete. 3 new detections.",
+    "timestamp": "2025-03-07T06:00:00Z",
+    "location": null,
+    "river": "Mathare River",
+    "distance_m": null,
+    "encroachment_id": null
+  },
+  {
+    "id": "ALT-007",
+    "type": "NEW_ENCROACHMENT",
+    "severity": "MEDIUM",
+    "title": "Storage structure detected — Mathare River",
+    "description": "Small workshop 18m from river. Partial impervious surface.",
+    "timestamp": "2025-03-06T10:30:00Z",
+    "location": { "lat": -1.2630, "lng": 36.8497 },
+    "river": "Mathare River",
+    "distance_m": 18,
+    "encroachment_id": "ENC-2025-005"
+  }
+]

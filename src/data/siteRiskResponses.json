@@ -1,0 +1,67 @@
+{
+  "presets": {
+    "mathare_high_risk": {
+      "site": { "lat": -1.2612, "lng": 36.8570 },
+      "risk_level": "HIGH",
+      "risk_score": 87,
+      "distance_from_river_m": 12,
+      "nearest_river": "Mathare River",
+      "inside_buffer": true,
+      "buffer_width_m": 30,
+      "flood_zone": "Zone A — High Risk",
+      "land_classification": "Riparian Reserve",
+      "legal_reference": "Kenya Water Act (2016), Section 25",
+      "recommendation": "Do not build. Legal violations apply under Water Act (2016). Site is within the mandatory 30-metre riparian buffer zone.",
+      "ai_narrative": "This location is 12 metres from the Mathare River centreline, well within the legally protected 30-metre riparian buffer. Satellite imagery from March 2025 shows new construction activity in this area. Building here violates the Kenya Water Act (2016) and risks severe flood damage during seasonal rains. Structures in this zone were among the hardest hit during the 2024 Mathare floods, which displaced over 5,000 residents.",
+      "history": [
+        { "date": "2024-01-10", "status": "Bare earth / vegetation" },
+        { "date": "2024-11-20", "status": "Foundation detected" },
+        { "date": "2025-03-15", "status": "Structure with partial roofing" }
+      ]
+    },
+    "westlands_safe": {
+      "site": { "lat": -1.2640, "lng": 36.8030 },
+      "risk_level": "LOW",
+      "risk_score": 12,
+      "distance_from_river_m": 340,
+      "nearest_river": "Kirichwa Kubwa River",
+      "inside_buffer": false,
+      "buffer_width_m": 30,
+      "flood_zone": "Zone C — Minimal Risk",
+      "land_classification": "Commercial Zone",
+      "legal_reference": "Kenya Water Act (2016), Section 25",
+      "recommendation": "Site is clear for construction subject to standard planning approvals. No riparian restrictions apply at this distance.",
+      "ai_narrative": "This location in Westlands is 340 metres from the nearest river (Kirichwa Kubwa). It is well outside any riparian buffer zone and in a designated commercial area. The flood risk here is minimal, classified as Zone C. Standard building regulations and county planning approvals apply, but no special riparian or flood-zone restrictions are triggered.",
+      "history": [
+        { "date": "2020-01-01", "status": "Commercial zone — no changes" }
+      ]
+    },
+    "ngong_medium_risk": {
+      "site": { "lat": -1.2910, "lng": 36.8088 },
+      "risk_level": "MEDIUM",
+      "risk_score": 58,
+      "distance_from_river_m": 22,
+      "nearest_river": "Ngong River",
+      "inside_buffer": true,
+      "buffer_width_m": 30,
+      "flood_zone": "Zone B — Moderate Risk",
+      "land_classification": "Residential / Buffer Overlap",
+      "legal_reference": "Kenya Water Act (2016), Section 25",
+      "recommendation": "Proceed with caution. Site is within the 30-metre buffer but at the outer edge. Consult county planning office for potential variance. Flood insurance strongly recommended.",
+      "ai_narrative": "This site is 22 metres from the Ngong River centreline — inside the legally protected 30-metre buffer but near its outer boundary. The area is classified as Zone B (moderate flood risk). While some existing structures are present nearby, new construction technically requires a variance from the county planning authority. The 2024 flood data shows this stretch experienced moderate flooding (0.3m water depth).",
+      "history": [
+        { "date": "2024-06-15", "status": "Bare earth" },
+        { "date": "2025-02-08", "status": "Small structure detected" }
+      ]
+    }
+  },
+  "fallback_response": {
+    "risk_level": "UNKNOWN",
+    "risk_score": null,
+    "distance_from_river_m": null,
+    "nearest_river": "Calculating...",
+    "inside_buffer": null,
+    "recommendation": "Unable to assess. Please select a location within the monitored zone.",
+    "ai_narrative": "The selected location is outside our current monitoring coverage. Terra AI currently covers the Mathare, Nairobi, Ngong, and Kirichwa Kubwa river corridors. Please select a location near one of these rivers for a site risk assessment."
+  }
+}

@@ -5,6 +5,7 @@ const layers = [
   { id: 'rivers', label: 'River Network', color: '#0891B2', defaultOn: true, icon: '🌊' },
   { id: 'buffers', label: 'Riparian Buffer (30m)', color: '#16A34A', defaultOn: true, icon: '🟢' },
   { id: 'encroachments', label: 'Encroachments', color: '#DC2626', defaultOn: true, icon: '⚠️' },
+  { id: 'heatmap', label: 'Restricted Zones Heatmap', color: '#EF4444', defaultOn: false, icon: '🛑' },
   { id: 'floodZones', label: 'Flood Zones', color: '#0284C7', defaultOn: true, icon: '🌧' },
   { id: 'riskZones', label: 'Risk Heatmap', color: '#D97706', defaultOn: true, icon: '🔥' },
 ]

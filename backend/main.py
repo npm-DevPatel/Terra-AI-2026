@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-from geo_engine import assess_site, find_nearest_river
+from geo_engine import assess_site, find_nearest_river, get_restricted_zones
 from ai_service import generate_site_risk_narrative, chat_response
 
 # ── Logging ──
@@ -100,6 +100,19 @@ async def get_alerts():
 async def get_metrics():
     """Return dashboard summary metrics."""
     return load_json("metrics.json")
+
+
+@app.get("/api/restricted-zones-heatmap")
+async def get_restricted_zones_heatmap():
+    """
+    Return GeoJSON polygons representing the 30m restricted riparian buffer zones.
+    Used for frontend heatmap/buffer visualization.
+    """
+    try:
+        return get_restricted_zones()
+    except Exception as e:
+        logger.error(f"Failed to generate restricted zones: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate heatmap data")
 
 
 @app.post("/api/site-risk")

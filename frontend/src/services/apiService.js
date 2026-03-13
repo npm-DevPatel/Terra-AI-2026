@@ -52,6 +52,13 @@ export async function fetchEncroachments() {
 }
 
 /**
+ * Get restricted zones heatmap GeoJSON data
+ */
+export async function fetchRestrictedZones() {
+  return apiFetch('/restricted-zones-heatmap')
+}
+
+/**
  * Get alert feed
  */
 export async function fetchAlerts() {

@@ -64,6 +64,42 @@ def _get_river_geometries():
     return rivers
 
 
+def get_restricted_zones():
+    """
+    Generate GeoJSON of restricted zones (30m buffer around rivers).
+    This serves data for the frontend heatmap/buffer layer.
+    """
+    rivers = _get_river_geometries()
+    if not rivers:
+        return {"type": "FeatureCollection", "features": []}
+
+    features = []
+    # Roughly 30 meters in degrees for Nairobi's latitude (lat ~ -1.2, lon ~ 36.8)
+    # 1 degree of latitude is ~111km. 30m / 111,000m = ~0.00027 degrees.
+    buffer_deg = 0.00027 
+
+    for river in rivers:
+        # Buffer the LineString geometry
+        buffered_geom = river["geometry"].buffer(buffer_deg)
+        
+        # We need to construct the GeoJSON polygon geometry back from Shapely
+        # Shapely's __geo_interface__ is perfect for this
+        features.append({
+            "type": "Feature",
+            "properties": {
+                "name": river["name"],
+                "risk_level": river["risk_level"],
+                "buffer_type": "30m Riparian Restricted Zone"
+            },
+            "geometry": buffered_geom.__geo_interface__
+        })
+
+    return {
+        "type": "FeatureCollection",
+        "features": features
+    }
+
+
 def _haversine_distance(lat1, lon1, lat2, lon2):
     """Calculate the great-circle distance in meters between two points."""
     R = 6371000  # Earth radius in meters

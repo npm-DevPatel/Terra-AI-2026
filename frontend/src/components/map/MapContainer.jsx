@@ -6,6 +6,7 @@ import encroachmentData from '../../data/encroachments.json'
 import { fetchNairobiRivers } from '../../services/overpassService'
 import { fetchFloodData, generateFloodZones } from '../../services/floodService'
 import { generateRiskZones } from '../../services/riskEngine'
+import { fetchRestrictedZones } from '../../services/apiService'
 
 const NAIROBI_CENTER = [36.8219, -1.2921]
 const FLOOD_PRONE_RIVER_IDS = new Set(['nairobi-river', 'mathare-river', 'ngong-river'])
@@ -139,10 +140,11 @@ const BUFFER_LAYER_IDS = ['riparian-buffers-fill', 'riparian-buffers-line']
 const ENCROACHMENT_LAYER_IDS = ['encroachments-glow', 'encroachments-fill', 'encroachments-outline']
 const FLOOD_LAYER_IDS = ['flood-zones-bg', 'flood-zones-fill', 'flood-zones-outline']
 const RISK_LAYER_IDS = ['risk-zones-fill', 'risk-zones-outline', 'risk-zones-glow']
+const HEATMAP_LAYER_IDS = ['restricted-zones-heatmap']
 
 const ALL_DATA_LAYER_IDS = [
   ...RIVER_LAYER_IDS, ...BUFFER_LAYER_IDS, ...ENCROACHMENT_LAYER_IDS,
-  ...FLOOD_LAYER_IDS, ...RISK_LAYER_IDS,
+  ...FLOOD_LAYER_IDS, ...RISK_LAYER_IDS, ...HEATMAP_LAYER_IDS,
 ]
 
 const MapContainer = forwardRef(function MapContainer(
@@ -165,7 +167,7 @@ const MapContainer = forwardRef(function MapContainer(
   }))
 
   // ── Add Data Layers ──
-  const addDataLayers = useCallback((map, riversGeoJSON, floodZonesGeoJSON, riskZonesGeoJSON) => {
+  const addDataLayers = useCallback((map, riversGeoJSON, floodZonesGeoJSON, riskZonesGeoJSON, heatmapGeoJSON) => {
     if (dataLoadedRef.current) return
     dataLoadedRef.current = true
 
@@ -383,6 +385,30 @@ const MapContainer = forwardRef(function MapContainer(
       console.error('[Terra AI] Failed to add encroachments layer:', err)
     }
 
+    // ── Restricted Zones Heatmap ──
+    if (heatmapGeoJSON && heatmapGeoJSON.features.length > 0) {
+      try {
+        map.addSource('restricted-zones', { type: 'geojson', data: heatmapGeoJSON })
+
+        // Add a heatmap layer using the restricted zones
+        // The restricted zones are polygons, but MapLibre's heatmap layer specifically requires point geometries.
+        // As a fallback/alternative, let's treat it as a brightly colored thematic fill layer 
+        // that serves the visual purpose of a "heatmap" to highlight these restricted zones explicitly.
+        map.addLayer({
+          id: 'restricted-zones-heatmap', 
+          type: 'fill', 
+          source: 'restricted-zones',
+          paint: {
+            'fill-color': '#ff0000', // Red for restricted zones
+            'fill-opacity': 0.6,
+            'fill-outline-color': '#ffffff'
+          },
+        })
+      } catch (err) {
+        console.error('[Terra AI] Failed to add heatmap layer:', err)
+      }
+    }
+
     // ── Pulse Animation ──
     let pulsePhase = 0
     function pulseAnimation() {
@@ -594,8 +620,17 @@ const MapContainer = forwardRef(function MapContainer(
           console.warn('[Terra AI] Risk zone generation failed:', error)
         }
 
+        // Fetch Heatmap data (Restricted Zones)
+        let heatmapGeoJSON = { type: 'FeatureCollection', features: [] }
+        try {
+          heatmapGeoJSON = await fetchRestrictedZones()
+          console.log('[Terra AI] Fetched %d heatmap features', heatmapGeoJSON.features?.length || 0)
+        } catch (error) {
+          console.warn('[Terra AI] Heatmap fetch failed:', error)
+        }
+
         if (!isCancelled) {
-          addDataLayers(map, riversGeoJSON, floodZonesGeoJSON, riskZonesGeoJSON)
+          addDataLayers(map, riversGeoJSON, floodZonesGeoJSON, riskZonesGeoJSON, heatmapGeoJSON)
           setMapLoaded(true)
         }
       })
@@ -647,7 +682,12 @@ const MapContainer = forwardRef(function MapContainer(
         riskZonesGeoJSON = generateRiskZones(encroachmentData, riversGeoJSON, floodData)
       } catch { /* ignore */ }
 
-      addDataLayers(map, riversGeoJSON, floodZonesGeoJSON, riskZonesGeoJSON)
+      let heatmapGeoJSON = { type: 'FeatureCollection', features: [] }
+      try {
+        heatmapGeoJSON = await fetchRestrictedZones()
+      } catch { /* ignore */ }
+
+      addDataLayers(map, riversGeoJSON, floodZonesGeoJSON, riskZonesGeoJSON, heatmapGeoJSON)
     })
   }, [mapStyle, mapLoaded, addDataLayers])
 
@@ -662,6 +702,7 @@ const MapContainer = forwardRef(function MapContainer(
       encroachments: ENCROACHMENT_LAYER_IDS,
       floodZones: FLOOD_LAYER_IDS,
       riskZones: RISK_LAYER_IDS,
+      heatmap: HEATMAP_LAYER_IDS,
     }
 
     for (const [groupKey, layerIds] of Object.entries(layerGroups)) {

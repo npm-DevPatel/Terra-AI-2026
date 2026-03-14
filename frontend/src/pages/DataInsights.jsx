@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-
-const GOOGLE_MAPS_API_KEY = 'AIzaSyASgaph3jrYOC3VYrAZYQKgbrrrA5rHJa8'
+import maplibregl from 'maplibre-gl'
 
 export default function DataInsights() {
   const location = useLocation()
@@ -37,79 +36,111 @@ export default function DataInsights() {
       const lat = siteRisk.site.lat
       const lng = siteRisk.site.lng
 
-      // Load Google Maps API dynamically
-      const loadGoogleMaps = () => {
-        return new Promise((resolve) => {
-          if (window.google && window.google.maps) {
-            resolve(window.google.maps)
-          } else {
-            const script = document.createElement('script')
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}`
-            script.async = true
-            script.defer = true
-            script.onload = () => {
-              resolve(window.google.maps)
-            }
-            document.head.appendChild(script)
-          }
-        })
+      // Helper function to create circle coordinates
+      function createCircleCoordinates(latCenter, lngCenter, radiusKm) {
+        const R = 6371 // Earth radius in km
+        const points = 64 // Number of points for smooth circle
+        const coordinates = []
+
+        for (let i = 0; i < points; i++) {
+          const angle = (i / points) * (2 * Math.PI)
+          const lat = latCenter + (radiusKm / R) * (180 / Math.PI) * Math.cos(angle)
+          const lng = lngCenter + (radiusKm / R) * (180 / Math.PI) * Math.sin(angle) / Math.cos((latCenter * Math.PI) / 180)
+          coordinates.push([lng, lat])
+        }
+
+        // Close the circle
+        coordinates.push(coordinates[0])
+        return coordinates
       }
 
-      loadGoogleMaps().then(() => {
-        // Initialize Google Map with satellite imagery
-        const map = new window.google.maps.Map(mapContainerRef.current, {
+      try {
+        // Initialize maplibre map
+        const map = new maplibregl.Map({
+          container: mapContainerRef.current,
+          style: 'https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json',
+          center: [lng, lat],
           zoom: 16,
-          center: { lat, lng },
-          mapTypeId: window.google.maps.MapTypeId.SATELLITE,
-          styles: [
-            {
-              featureType: 'all',
-              stylers: [
-                { saturation: 0.2 },
-              ],
-            },
-          ],
-          zoomControl: true,
-          streetViewControl: false,
-          fullscreenControl: true,
-          mapTypeControl: true,
-          mapTypeControlOptions: {
-            mapTypeIds: [
-              window.google.maps.MapTypeId.SATELLITE,
-              window.google.maps.MapTypeId.ROADMAP,
-              window.google.maps.MapTypeId.TERRAIN,
-              window.google.maps.MapTypeId.HYBRID,
-            ],
-          },
-        })
-
-        // Add marker to the site location
-        new window.google.maps.Marker({
-          position: { lat, lng },
-          map: map,
-          title: 'Site Location',
-          icon: 'http://maps.google.com/mapfiles/ms/icons/0D9488-F0F0F0.png',
-        })
-
-        // Add a circle overlay for 7.5 km radius
-        new window.google.maps.Circle({
-          strokeColor: '#0D9488',
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-          fillColor: '#0D9488',
-          fillOpacity: 0.15,
-          map: map,
-          center: { lat, lng },
-          radius: 7500, // 7.5 km in meters
+          pitch: 0,
+          bearing: 0,
         })
 
         mapRef.current = map
-      })
 
-      return () => {
-        if (mapRef.current) {
-          mapRef.current = null
+        const addCircleAndMarker = () => {
+          try {
+            // Remove existing layers/sources if they exist
+            if (map.getLayer('site-circle-outline')) map.removeLayer('site-circle-outline')
+            if (map.getLayer('site-circle-layer')) map.removeLayer('site-circle-layer')
+            if (map.getSource('site-circle')) map.removeSource('site-circle')
+
+            // Create 7.5 km radius circle
+            const radiusKm = 7.5
+            const circleCoordinates = createCircleCoordinates(lat, lng, radiusKm)
+
+            // Add circle as GeoJSON source
+            map.addSource('site-circle', {
+              type: 'geojson',
+              data: {
+                type: 'Feature',
+                geometry: {
+                  type: 'Polygon',
+                  coordinates: [circleCoordinates],
+                },
+              },
+            })
+
+            // Add circle fill
+            map.addLayer({
+              id: 'site-circle-layer',
+              type: 'fill',
+              source: 'site-circle',
+              paint: {
+                'fill-color': '#0D9488',
+                'fill-opacity': 0.15,
+              },
+            })
+
+            // Add circle outline
+            map.addLayer({
+              id: 'site-circle-outline',
+              type: 'line',
+              source: 'site-circle',
+              paint: {
+                'line-color': '#0D9488',
+                'line-width': 2,
+                'line-opacity': 0.8,
+              },
+            })
+
+            // Add marker
+            const markerEl = document.createElement('div')
+            markerEl.style.cssText = `
+              width: 24px; height: 24px; border-radius: 50%;
+              background: radial-gradient(circle, #0D9488 30%, rgba(13, 148, 136, 0.3) 70%);
+              border: 2px solid #0D9488;
+              box-shadow: 0 0 16px rgba(13, 148, 136, 0.6);
+            `
+
+            new maplibregl.Marker({ element: markerEl })
+              .setLngLat([lng, lat])
+              .addTo(map)
+          } catch (error) {
+            console.error('Error adding circle and marker:', error)
+          }
         }
+
+        if (map.isStyleLoaded()) {
+          addCircleAndMarker()
+        } else {
+          map.once('styledata', addCircleAndMarker)
+        }
+
+        return () => {
+          map.remove()
+        }
+      } catch (error) {
+        console.error('Error initializing map:', error)
       }
     }
   }, [siteRisk])
